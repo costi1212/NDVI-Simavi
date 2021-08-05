@@ -226,9 +226,9 @@ responseGet = requestImage('2021-05-15', listToString(coordinatesBBOX))
 bytes = bytearray(responseGet)
 image = Image.open(io.BytesIO(bytes))
 print(image)
-image.save('D:\Piton Siveco NDVI\Imagini\Imagine.png')
+image.save('Imagini\Imagine.png')
 cropImage("Imagini/Imagine.png", pixels)
-img = mpimg.imread('D:\Piton Siveco NDVI\Imagini\dst2.png')
+img = mpimg.imread('Imagini\dst2.png')
 
 R, G, B = img[:, :, 0], img[:, :, 1], img[:, :, 2]
 #A = img[:, :, 3]
