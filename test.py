@@ -48,9 +48,9 @@ print(contours)
 print('Numbers of contours found=' + str(len(contours)))
 
 corners = extractPolygonCorners(imagePath, "yellow")
-#print(corners)
+print(corners)
 
-roundedCorners = np.rint(corners)
+#roundedCorners = np.rint(corners)
 #print(roundedCorners)
 # corner finder
 '''
@@ -69,7 +69,7 @@ cv2.waitKey(0)
 '''
 
 #'''
-cv2.drawContours(image,contours,-1,(255,0,255),3)
+cv2.drawContours(image,contours,-1,(255,0,255),3) 
 cv2.imshow('contours',image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
