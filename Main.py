@@ -17,7 +17,7 @@ from numpy import savetxt
 
 #masca gaussiana [1 2 1] [2 4 2] [1 2 1]
 
-# np.set_printoptions(threshold=sys.maxsize)
+np.set_printoptions(threshold=sys.maxsize)
 #Variabile globale
 
 
@@ -128,6 +128,9 @@ def requestImage(date, bbox):
 #def clasifyPixels():
 
 
+
+
+
 def extractPolygonCorners(imagePath, color):
     img = cv2.imread(imagePath)
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -147,7 +150,7 @@ def extractPolygonCorners(imagePath, color):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.001)
     corners = cv2.cornerSubPix(hsv, np.float32(centroids), (5, 5), (-1, -1), criteria)
     print("Corners "+imagePath + '\n')
-    for i in range(1, len(corners)):
+    for i in range(0, len(corners)):
         print(corners[i])
     img[dst > 0.1 * dst.max()] = [0, 0, 255]
     cv2.imshow('image', img)
@@ -283,7 +286,7 @@ pixelsGreen = extractPolygonCorners("Imagini/green.png", 'green')
 pixelsYellow = extractPolygonCorners("Imagini/yellow.png", 'yellow')
 pixelsBrown = extractPolygonCorners("Imagini/brown.png", 'brown')
 
-print(pixelsBrown)
+#print(pixelsBrown)
 #greenCoordinates = pixelsIndicesToCoordinates(pixelsGreen, 250, 250, coordinatesBBOX)
 brownCoordinates = pixelsIndicesToCoordinates(pixelsBrown, 250, 250, coordinatesBBOX)
 print(brownCoordinates)
