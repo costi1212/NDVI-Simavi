@@ -153,6 +153,8 @@ def extractPolygonCorners(imagePath, color):
     for i in range(0, len(corners)):
         print(corners[i])
     img[dst > 0.1 * dst.max()] = [0, 0, 255]
+    print("DST:")
+    print(dst[dst > 0.1 * dst.max()])
     cv2.imshow('image', img)
     cv2.waitKey(0)
     cv2.imwrite(f'Imagini/{color}points.png', img)
@@ -246,9 +248,11 @@ responseGet = requestImage('2021-05-15', listToString(coordinatesBBOX))
 bytes = bytearray(responseGet)
 image = Image.open(io.BytesIO(bytes))
 print(image)
-image.save('D:\Piton Siveco NDVI\Imagini\Imagine.png')
-cropImage("Imagini\Imagine.png", pixels)
-img = mpimg.imread('D:\Piton Siveco NDVI\Imagini\dst2.png')
+
+image.save('Imagini\Imagine.png')
+cropImage("Imagini/Imagine.png", pixels)
+img = mpimg.imread('Imagini\dst2.png')
+
 
 R, G, B = img[:, :, 0], img[:, :, 1], img[:, :, 2]
 #A = img[:, :, 3]
