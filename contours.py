@@ -16,7 +16,7 @@ def extractPolygonCorners(imagePath, color):
 
     dst = cv2.cornerHarris(hsv, 5, 3, 0.04)
     _, dst = cv2.threshold(dst, 0.1 * dst.max(), 255, 0)
-    dst = np.uint8(dst)
+    #dst = np.uint8(dst)
     img[dst > 0.1 * dst.max()] = [0, 0, 255]
     
     corners = []
@@ -25,6 +25,7 @@ def extractPolygonCorners(imagePath, color):
             if (img[i][j] == [0, 0, 255]).all():
                 corners.append([j, i])
 
+    #corners = np.uint8(corners)
     cv2.imshow('corners', img)
     cv2.imwrite(f'Imagini/{color}points.png', img)
     return corners
@@ -42,20 +43,25 @@ contours, hierarchy = cv2.findContours(edged,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_
 
 corners = extractPolygonCorners(imagePath, "yellow")
 
-
+#'''
+# PROBLEMA DE COMPARARE INTRE LISTE
 polygons = []
 for cont in contours:
+    aux = cont.tolist()
     poly = []
     for coords in corners:
-        if coords in cont:
+        if coords in aux:
             poly.append(coords)
+        #for c in cont:
+         #   if (coords == c).all():
+          #      poly.append(coords)
+            #if np.array_equal(c, coords):
+             #   poly.append(coords)
         
     polygons.append(poly)
 
-
 print('Numbers of contours found:' + str(len(contours)))
 print("Number of polygons:" + str(len(polygons)))
-
 
 for p in polygons:
     b = random.randint(0,255)
@@ -67,8 +73,8 @@ for p in polygons:
         
 
 cv2.imshow("polygons", image)
-
-cv2.drawContours(image,contours[12],-1,(255,0,255),3) 
+#'''
+cv2.drawContours(image,contours,-1,(255,0,255),3) 
 cv2.imshow('contours',image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
