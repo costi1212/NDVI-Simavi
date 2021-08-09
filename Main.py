@@ -84,6 +84,20 @@ def mapPointOnImage(bbox, point):
     bbox = convertCoordinates(bbox)
 
 
+def pixelsIndicesToCoordinates(pixelIndices, length, width, bbox):
+    bbox = convertCoordinates(bbox)
+    values = pixelMapValue(bbox[0], bbox[2], bbox[1], bbox[3], length, width)
+    mapCoordinates = []
+    originPoint = [bbox[0], bbox[3]]
+    for i in range(0, len(pixelIndices)):
+        pixelPosX = originPoint[0] + pixelIndices[i][0] * values[0]
+        pixelPosY = originPoint[1] + pixelIndices[i][1] * values[1]
+        pair = [pixelPosX, pixelPosY]
+        mapCoordinates.append(pair)
+    return mapCoordinates
+
+
+
 def mapPolygonPointsOnImage(bbox, polygonCoordinates, length, width):
     bbox = verifyOrderOfBboxCoordinates(bbox)
     bbox = convertCoordinates(bbox)
@@ -140,6 +154,9 @@ def extractPolygonCorners(imagePath, color):
     cv2.waitKey(0)
     cv2.imwrite(f'Imagini/{color}points.png', img)
     cv2.destroyAllWindows
+    corners1 = corners
+    #print(corners1)
+    return corners
 
 
 def colorMask(imagePath, color):
@@ -227,7 +244,7 @@ bytes = bytearray(responseGet)
 image = Image.open(io.BytesIO(bytes))
 print(image)
 image.save('D:\Piton Siveco NDVI\Imagini\Imagine.png')
-cropImage("Imagini/Imagine.png", pixels)
+cropImage("Imagini\Imagine.png", pixels)
 img = mpimg.imread('D:\Piton Siveco NDVI\Imagini\dst2.png')
 
 R, G, B = img[:, :, 0], img[:, :, 1], img[:, :, 2]
@@ -244,7 +261,7 @@ plotGray = 0.2989 * R + 0.5870 * G + 0.1140 * B
 fig = Figure()
 
 array = np.zeros([250, 250], dtype=np.uint8)
-
+#ornersGreen=[]
 
 
 plot1 = plt.figure('Normal')
@@ -258,10 +275,18 @@ imgGray = cv2.imread('Imagini/dst2.png', 0)
 cv2.imwrite("Imagini/Gray.png", imgGray)
 #extractPolygonCorners("Imagini/Gray.png")
 color = "green"
-colorMask("Imagini/dst.png","green")
-colorMask("Imagini/dst.png","yellow")
-colorMask("Imagini/dst.png","brown")
-extractPolygonCorners("Imagini/green.png", 'green')
-extractPolygonCorners("Imagini/yellow.png", 'yellow')
-extractPolygonCorners("Imagini/brown.png", 'brown')
+colorMask("Imagini/dst.png", "green")
+colorMask("Imagini/dst.png", "yellow")
+colorMask("Imagini/dst.png", "brown")
+
+pixelsGreen = extractPolygonCorners("Imagini/green.png", 'green')
+pixelsYellow = extractPolygonCorners("Imagini/yellow.png", 'yellow')
+pixelsBrown = extractPolygonCorners("Imagini/brown.png", 'brown')
+
+print(pixelsBrown)
+#greenCoordinates = pixelsIndicesToCoordinates(pixelsGreen, 250, 250, coordinatesBBOX)
+brownCoordinates = pixelsIndicesToCoordinates(pixelsBrown, 250, 250, coordinatesBBOX)
+print(brownCoordinates)
+print(pixelsBrown)
+#print(greenCoordinates)
 #plt.show()
