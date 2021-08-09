@@ -45,6 +45,7 @@ corners = extractPolygonCorners(imagePath, "yellow")
 
 #'''
 # PROBLEMA DE COMPARARE INTRE LISTE
+# ndarray sau list?
 polygons = []
 for cont in contours:
     aux = cont.tolist()
@@ -52,11 +53,12 @@ for cont in contours:
     for coords in corners:
         if coords in aux:
             poly.append(coords)
+
+           
         #for c in cont:
+        # !functioneaza dar merge foarte greu! 
          #   if (coords == c).all():
           #      poly.append(coords)
-            #if np.array_equal(c, coords):
-             #   poly.append(coords)
         
     polygons.append(poly)
 
