@@ -136,6 +136,8 @@ def extractPolygonCorners(imagePath, color):
     for i in range(1, len(corners)):
         print(corners[i])
     img[dst > 0.1 * dst.max()] = [0, 0, 255]
+    print("DST:")
+    print(dst[dst > 0.1 * dst.max()])
     cv2.imshow('image', img)
     cv2.waitKey(0)
     cv2.imwrite(f'Imagini/{color}points.png', img)
