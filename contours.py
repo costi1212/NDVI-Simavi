@@ -15,8 +15,8 @@ def extractPolygonCorners(imagePath, color):
         hsv = cv2.inRange(hsv, (13, 25, 25), (22, 255, 255))
 
     dst = cv2.cornerHarris(hsv, 5, 3, 0.04)
-    ret, dst = cv2.threshold(dst, 0.1 * dst.max(), 255, 0)
-    dst = np.uint8(dst)
+    _, dst = cv2.threshold(dst, 0.1 * dst.max(), 255, 0)
+    #dst = np.uint8(dst)
     img[dst > 0.1 * dst.max()] = [0, 0, 255]
     
     corners = []
@@ -60,7 +60,6 @@ for cont in contours:
         
     polygons.append(poly)
 
-print('Number of corners found:' + str(len(corners)))
 print('Numbers of contours found:' + str(len(contours)))
 print("Number of polygons:" + str(len(polygons)))
 
@@ -75,9 +74,7 @@ for p in polygons:
 
 cv2.imshow("polygons", image)
 #'''
-
-
-cv2.drawContours(image,contours,-1,(255,0,255),3)
+cv2.drawContours(image,contours,-1,(255,0,255),3) 
 cv2.imshow('contours',image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
