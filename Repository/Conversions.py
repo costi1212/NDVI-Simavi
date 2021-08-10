@@ -1,5 +1,4 @@
 import math
-
 from pyproj import Transformer
 
 def roundFloatList(floatList):

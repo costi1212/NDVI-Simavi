@@ -1,18 +1,13 @@
 import random
-
 import cv2
-
-
-# Finds the contours of all the shapes of the given image.
-# The contours are returned as a list of lists.
 import numpy as np
 
 
-def findContours(image):
-    gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-    edged=cv2.Canny(gray,30,200)
-    contours, _ = cv2.findContours(edged,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
-    return contours
+def loadImage(imagePath):
+    image=cv2.imread(imagePath)
+    cv2.imshow('input image',image)
+    cv2.waitKey(0)
+    return image
 
 
 # Finds the contours of all the shapes of the given image.
@@ -32,17 +27,12 @@ def extractPolygons(contours, corners):
         for coords in corners:
             if coords in contour:
                 poly.append(coords)
-
         polygons.append(poly)
 
     return polygons
 
 
-# Converts a 3 level numpy arrray to a 2 level list.
-
-
-
-
+# Finds the corners of all the polygons in the given image.
 def extractPolygonCorners(imagePath, color):
     img = cv2.imread(imagePath)
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -69,13 +59,7 @@ def extractPolygonCorners(imagePath, color):
     return corners
 
 
-def loadImage(imagePath):
-    image=cv2.imread(imagePath)
-    cv2.imshow('input image',image)
-    cv2.waitKey(0)
-    return image
-
-
+# Testing function for visualising the polygons.
 def drawPolygonsAndContours(polygons, contours, image):
     for p in polygons:
         b = random.randint(0,255)
