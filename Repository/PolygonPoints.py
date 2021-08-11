@@ -2,9 +2,9 @@ import random
 import cv2
 import numpy as np
 
-
+# Loads image from given path.
 def loadImage(imagePath):
-    image=cv2.imread(imagePath)
+    image = cv2.imread(imagePath)
     cv2.imshow('input image',image)
     cv2.waitKey(0)
     return image
@@ -13,8 +13,8 @@ def loadImage(imagePath):
 # Finds the contours of all the shapes of the given image.
 # The contours are returned as a list of lists.
 def findContours(image):
-    gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-    edged=cv2.Canny(gray,30,200)
+    gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+    edged = cv2.Canny(gray,30,200)
     contours, _ = cv2.findContours(edged,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
     return contours
 
@@ -46,6 +46,7 @@ def extractPolygonCorners(imagePath, color):
 
     dst = cv2.cornerHarris(hsv, 5, 3, 0.04)
     _, dst = cv2.threshold(dst, 0.1 * dst.max(), 255, 0)
+
     img[dst > 0.1 * dst.max()] = [0, 0, 255]
 
     corners = []
