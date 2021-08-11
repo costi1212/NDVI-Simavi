@@ -17,24 +17,48 @@ def requestImage(date, bbox):
 
 def main():
     #np.set_printoptions(threshold=sys.maxsize)
+    #data set (shoudl come from REST later on)
     polygonCoordinates = [27.199243, 45.910026, 27.209468, 45.911885, 27.209607, 45.906525, 27.200563, 45.904793]
     coordinatesBBOX = [3028959.60, 5766239.96, 3027805.88, 5765105.34]
+
+   #processing the data and croping the image
     pixels = mapPolygonPointsOnImage(coordinatesBBOX, polygonCoordinates, 250, 250)
     coordinatesBBOX = verifyOrderOfBboxCoordinates(coordinatesBBOX)
     responseGet = requestImage('2021-05-15', listToString(coordinatesBBOX))
     bytes = bytearray(responseGet)
     image = Image.open(io.BytesIO(bytes))
-    image.save('Imagini\Imagine.png')
+    image.save('Imagini/Imagine.png')
     cropImage("Imagini/Imagine.png", pixels)
+
+    #Creating mask for each color
     colorMask("Imagini/dst.png", "green")
     colorMask("Imagini/dst.png", "yellow")
     colorMask("Imagini/dst.png", "brown")
-    image = loadImage('Imagini/yellow.png')
-    contours = findContours(image)
-    corners = extractPolygonCorners('Imagini/yellow.png', "yellow")
-    convertedContours = convertNumpyToList(contours)
-    polygons = extractPolygons(convertedContours, corners)
-    drawPolygonsAndContours(polygons, contours, image)
+
+    imageYellow = loadImage('Imagini/yellow.png')
+    imageGreen = loadImage('Imagini/green.png')
+    imageBrown = loadImage('Imagini/brown.png')
+
+    contoursYellow = findContours(imageYellow)
+    contoursGreen = findContours(imageGreen)
+    contoursBrown = findContours(imageBrown)
+
+    cornersYellow = extractPolygonCorners('Imagini/yellow.png', "yellow")
+    convertedContoursYellow = convertNumpyToList(contoursYellow)
+    polygonsYellow = extractPolygons(convertedContoursYellow, cornersYellow)
+    drawPolygonsAndContours(polygonsYellow, contoursYellow, imageYellow)
+
+    cornersGreen = extractPolygonCorners('Imagini/green.png', "green")
+    convertedContoursGreen = convertNumpyToList(contoursGreen)
+    polygonsGreen = extractPolygons(convertedContoursGreen, cornersGreen)
+    drawPolygonsAndContours(polygonsGreen, contoursGreen, imageGreen)
+
+    cornersBrown = extractPolygonCorners('Imagini/brown.png', "brown")
+    convertedContoursBrown = convertNumpyToList(contoursBrown)
+    polygonsBrown = extractPolygons(convertedContoursBrown, cornersBrown)
+    drawPolygonsAndContours(polygonsBrown, contoursBrown, imageBrown)
+
+
 
 if __name__ == '__main__':
     main()

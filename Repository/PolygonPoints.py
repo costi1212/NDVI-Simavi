@@ -69,7 +69,7 @@ def drawPolygonsAndContours(polygons, contours, image):
             cv2.circle(image, (c[0],c[1]), 1, (b,r,g), 1)
 
     cv2.imshow("polygons", image)
-    cv2.drawContours(image,contours,-1,(255,0,255),3)
-    cv2.imshow('contours',image)
+    cv2.drawContours(image, contours, -1, (255, 0, 255), 3)
+    cv2.imshow('contours', image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
