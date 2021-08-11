@@ -8,10 +8,15 @@ from Repository.Conversions import *
 from Repository.ImageEditing import *
 from Repository.PolygonPoints import *
 
-
+# de mutat din main
 def requestImage(date, bbox):
     url = f'https://services.terrascope.be/wms/v2?service=WMS&version=1.3.0&request=GetMap&layers=CGS_S2_NDVI&format=image/png&time={date}&width=250&height=250&bbox={bbox}&srs=EPSG:3857'
     response = requests.get(url)
+
+    # poate sa adaugam un 
+    # if response.status_code == 200:
+    #   return response.content
+
     return response.content
 
 
