@@ -40,6 +40,7 @@ def createPolygonJson(polygon):
     polygonJson = createSimpleDictionary("urn:demeter:MgmtZone:Geom:", "Polygon")
 
     # de adaugat coordonatele din polygon[]
-    #polygonJson["asWKT"] = 
+    # format gresit deocamdata
+    polygonJson["asWKT"] = polygon
 
     return json.dumps(polygonJson)

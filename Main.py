@@ -1,3 +1,4 @@
+from Repository.JsonFunctions import createParcelRecordJson
 import requests
 #import PyLd
 from PIL import Image
@@ -63,7 +64,17 @@ def main():
     polygonsBrown = extractPolygons(convertedContoursBrown, cornersBrown)
     drawPolygonsAndContours(polygonsBrown, contoursBrown, imageBrown)
 
+    # TESTING
+    '''
+    polygonsCoordsBrown = []
 
+    for poly in polygonsBrown:
+        coords = pixelsIndicesToCoordinates(poly, 250, 250, coordinatesBBOX)
+        polygonsCoordsBrown.append(coords)
+    
+    j = createParcelRecordJson(polygonsCoordsBrown)
+    print(j)
+    '''
 
 if __name__ == '__main__':
     main()
