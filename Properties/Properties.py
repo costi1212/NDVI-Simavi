@@ -1,5 +1,6 @@
 HEIGHT = 250
 WIDTH = 250
+jsonOutputs = 'JsonOutputs/JsonOutputs.txt'
 croppedImageBlackBackground = 'Imagini/dst.png'
 colors = ['green', 'yellow', 'brown']
 imageLocation = 'Imagini/Imagine.png'

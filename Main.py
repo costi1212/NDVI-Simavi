@@ -59,11 +59,16 @@ def main():
     # data set (should come from REST later on)
     dataProcessing(coordinatesBBOX, polygonCoordinates)
     createColorMasks()
-
+    OutputFile = open(jsonOutputs, 'w')
     for i in colors:
         Polygons = getPolygons(i, coordinatesBBOX)
         print(Polygons)
-        greenJson = createParcelRecordJson(Polygons)
+        Json = createParcelRecordJson(Polygons)
+        #print(Json)
+        OutputFile.write(i.upper())
+        OutputFile.write(Json)
+        OutputFile.write('\n \n \n')
+
 
     # print(greenJson)
 
