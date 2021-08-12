@@ -31,28 +31,20 @@ def main():
     cropImage(imageLocation, pixels)
 
     #processing for all the color provided
+    coordinatesDict = {}
     for i in colors:
         colorMask("Imagini/dst.png", i)
         image = loadImage(f'Imagini/{i}.png')
         contours = findContours(image)
         corners = extractPolygonCorners(f'Imagini/{i}.png', i)
         convertedContours = convertNumpyToList(contours)
-        polygonsYellow = extractPolygons(convertedContours, corners)
-        drawPolygonsAndContours(polygonsYellow, contours, image)
-
-
-
-    # TESTING
-    #'''
-    polygonsCoordsBrown = []
-
-    for poly in polygonsBrown:
-        coords = pixelsIndicesToCoordinates(poly, 250, 250, coordinatesBBOX)
-        polygonsCoordsBrown.append(coords)
-    
-    j = createParcelRecordJson(polygonsCoordsBrown)
-    print(j)
-    #'''
+        polygons = extractPolygons(convertedContours, corners)
+        drawPolygonsAndContours(polygons, contours, image)
+        print(polygons)
+        coordinatesDict[i] = []
+        for polygon in polygons:
+            coordinatesDict[i].append(pixelsIndicesToCoordinates(polygon, length, width, coordinatesBBOX))
+        print(coordinatesDict)
 
 if __name__ == '__main__':
     main()

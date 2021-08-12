@@ -1,4 +1,5 @@
-
+length = 250
+width = 250
 colors = ['green', 'yellow', 'brown']
 imageLocation = 'Imagini/Imagine.png'
 date = '2021-05-15'
