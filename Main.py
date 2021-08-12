@@ -4,65 +4,43 @@ import requests
 from PIL import Image
 import io
 
-
+from Properties.Properties import *
 from Repository.Conversions import *
 from Repository.ImageEditing import *
 from Repository.PolygonPoints import *
 
 # de mutat din main
-def requestImage(date, bbox):
+def requestImage(bbox):
     url = f'https://services.terrascope.be/wms/v2?service=WMS&version=1.3.0&request=GetMap&layers=CGS_S2_NDVI&format=image/png&time={date}&width=250&height=250&bbox={bbox}&srs=EPSG:3857'
     response = requests.get(url)
-
     # poate sa adaugam un 
     # if response.status_code == 200:
     #   return response.content
-
     return response.content
 
 
 def main():
     #np.set_printoptions(threshold=sys.maxsize)
     #data set (shoudl come from REST later on)
-    polygonCoordinates = [27.199243, 45.910026, 27.209468, 45.911885, 27.209607, 45.906525, 27.200563, 45.904793]
-    coordinatesBBOX = [3028959.60, 5766239.96, 3027805.88, 5765105.34]
-
-   #processing the data and croping the image
+    #processing the data and croping the image
     pixels = mapPolygonPointsOnImage(coordinatesBBOX, polygonCoordinates, 250, 250)
-    coordinatesBBOX = verifyOrderOfBboxCoordinates(coordinatesBBOX)
-    responseGet = requestImage('2021-05-15', listToString(coordinatesBBOX))
+    responseGet = requestImage(listToString(coordinatesBBOX))
     bytes = bytearray(responseGet)
     image = Image.open(io.BytesIO(bytes))
-    image.save('Imagini/Imagine.png')
-    cropImage("Imagini/Imagine.png", pixels)
+    image.save(imageLocation)
+    cropImage(imageLocation, pixels)
 
-    #Creating mask for each color
-    colorMask("Imagini/dst.png", "green")
-    colorMask("Imagini/dst.png", "yellow")
-    colorMask("Imagini/dst.png", "brown")
+    #processing for all the color provided
+    for i in colors:
+        colorMask("Imagini/dst.png", i)
+        image = loadImage(f'Imagini/{i}.png')
+        contours = findContours(image)
+        corners = extractPolygonCorners(f'Imagini/{i}.png', i)
+        convertedContours = convertNumpyToList(contours)
+        polygonsYellow = extractPolygons(convertedContours, corners)
+        drawPolygonsAndContours(polygonsYellow, contours, image)
 
-    imageYellow = loadImage('Imagini/yellow.png')
-    imageGreen = loadImage('Imagini/green.png')
-    imageBrown = loadImage('Imagini/brown.png')
 
-    contoursYellow = findContours(imageYellow)
-    contoursGreen = findContours(imageGreen)
-    contoursBrown = findContours(imageBrown)
-
-    cornersYellow = extractPolygonCorners('Imagini/yellow.png', "yellow")
-    convertedContoursYellow = convertNumpyToList(contoursYellow)
-    polygonsYellow = extractPolygons(convertedContoursYellow, cornersYellow)
-    drawPolygonsAndContours(polygonsYellow, contoursYellow, imageYellow)
-
-    cornersGreen = extractPolygonCorners('Imagini/green.png', "green")
-    convertedContoursGreen = convertNumpyToList(contoursGreen)
-    polygonsGreen = extractPolygons(convertedContoursGreen, cornersGreen)
-    drawPolygonsAndContours(polygonsGreen, contoursGreen, imageGreen)
-
-    cornersBrown = extractPolygonCorners('Imagini/brown.png', "brown")
-    convertedContoursBrown = convertNumpyToList(contoursBrown)
-    polygonsBrown = extractPolygons(convertedContoursBrown, cornersBrown)
-    drawPolygonsAndContours(polygonsBrown, contoursBrown, imageBrown)
 
     # TESTING
     '''
