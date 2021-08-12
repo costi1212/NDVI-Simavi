@@ -60,19 +60,15 @@ def getPolygons(color, coordinatesBBOX):
 def main():
     #np.set_printoptions(threshold=sys.maxsize)
     #data set (should come from REST later on)
-    polygonCoordinates = [27.199243, 45.910026, 27.209468, 45.911885, 27.209607, 45.906525, 27.200563, 45.904793]
-    coordinatesBBOX = [3028959.60, 5766239.96, 3027805.88, 5765105.34]
-
     dataProcessing(coordinatesBBOX, polygonCoordinates)
     createColorMasks()
 
-    greenPolygons = getPolygons("green", coordinatesBBOX)
-    yellowPolygons = getPolygons("yellow", coordinatesBBOX)
-    brownPolygons = getPolygons("brown", coordinatesBBOX)
 
-    greenJson = createParcelRecordJson(greenPolygons)
-    yellowJson = createParcelRecordJson(yellowPolygons)
-    brownJson = createParcelRecordJson(brownPolygons)
+    for i in colors:
+        Polygons = getPolygons(i, coordinatesBBOX)
+        print(Polygons)
+        greenJson = createParcelRecordJson(Polygons)
+
     
     #print(greenJson)
 
