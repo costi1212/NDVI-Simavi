@@ -73,25 +73,25 @@ def mapPointOnImage(bbox, point):
     bbox = convertCoordinates(bbox)
 
 
-def pixelMapValue(xmax, xorigin, ymax, yorigin, length, width):
+def pixelMapValue(xmax, xorigin, ymax, yorigin, heigth, width):
     xdif = abs(xmax - xorigin)
     # print(xdif)
     ydif = abs(ymax - yorigin)
     # print(ydif)
     pixelValueX = xdif / width
-    pixelValueY = ydif / length
+    pixelValueY = ydif / heigth
     values = [pixelValueX, pixelValueY]
     return values
 
 
-def mapPolygonPointsOnImage(bbox, polygonCoordinates, length, width):
+def mapPolygonPointsOnImage(bbox, polygonCoordinates, heigth, width):
     bbox = verifyOrderOfBboxCoordinates(bbox)
     bbox = convertCoordinates(bbox)
     bboxPoint1 = [bbox[0], bbox[1]]
     bboxPoint2 = [bbox[2], bbox[3]]
     originPoint = [bbox[0], bbox[3]]
     pixelPositions = []
-    values = pixelMapValue(bbox[0], bbox[2], bbox[1], bbox[3], length, width)
+    values = pixelMapValue(bbox[0], bbox[2], bbox[1], bbox[3], heigth, width)
     for i in range(0, len(polygonCoordinates), 2):
         pixelposx = abs(polygonCoordinates[i] - originPoint[0]) / values[0]
         pixelposy = abs(polygonCoordinates[i + 1] - originPoint[1]) / values[1]
@@ -99,9 +99,9 @@ def mapPolygonPointsOnImage(bbox, polygonCoordinates, length, width):
         pixelPositions.append(pair)
     return pixelPositions
 
-def pixelsIndicesToCoordinates(pixelIndices, length, width, bbox):
+def pixelsIndicesToCoordinates(pixelIndices, heigth, width, bbox):
     bbox = convertCoordinates(bbox)
-    values = pixelMapValue(bbox[0], bbox[2], bbox[1], bbox[3], length, width)
+    values = pixelMapValue(bbox[0], bbox[2], bbox[1], bbox[3], heigth, width)
     mapCoordinates = []
     originPoint = [bbox[0], bbox[3]]
     for i in range(0, len(pixelIndices)):

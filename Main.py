@@ -9,7 +9,9 @@ from Repository.Conversions import *
 from Repository.ImageEditing import *
 from Repository.PolygonPoints import *
 
-# de mutat din main
+HEIGHT = 250
+WIDTH = 250
+
 def requestImage(date, bbox):
     url = f'https://services.terrascope.be/wms/v2?service=WMS&version=1.3.0&request=GetMap&layers=CGS_S2_NDVI&format=image/png&time={date}&width=250&height=250&bbox={bbox}&srs=EPSG:3857'
     response = requests.get(url)
@@ -20,15 +22,9 @@ def requestImage(date, bbox):
 
     return response.content
 
-
-def main():
-    #np.set_printoptions(threshold=sys.maxsize)
-    #data set (shoudl come from REST later on)
-    polygonCoordinates = [27.199243, 45.910026, 27.209468, 45.911885, 27.209607, 45.906525, 27.200563, 45.904793]
-    coordinatesBBOX = [3028959.60, 5766239.96, 3027805.88, 5765105.34]
-
-   #processing the data and croping the image
-    pixels = mapPolygonPointsOnImage(coordinatesBBOX, polygonCoordinates, 250, 250)
+# Processing the data and croping the image.
+def dataProcessing(coordinatesBBOX, polygonCoordinates):
+    pixels = mapPolygonPointsOnImage(coordinatesBBOX, polygonCoordinates, HEIGHT, WIDTH)
     coordinatesBBOX = verifyOrderOfBboxCoordinates(coordinatesBBOX)
     responseGet = requestImage('2021-05-15', listToString(coordinatesBBOX))
     bytes = bytearray(responseGet)
@@ -36,44 +32,53 @@ def main():
     image.save('Imagini/Imagine.png')
     cropImage("Imagini/Imagine.png", pixels)
 
-    #Creating mask for each color
+
+# Segments the image on 3 colors.
+def createColorMasks():
     colorMask("Imagini/dst.png", "green")
     colorMask("Imagini/dst.png", "yellow")
     colorMask("Imagini/dst.png", "brown")
 
-    imageYellow = loadImage('Imagini/yellow.png')
-    imageGreen = loadImage('Imagini/green.png')
-    imageBrown = loadImage('Imagini/brown.png')
 
-    contoursYellow = findContours(imageYellow)
-    contoursGreen = findContours(imageGreen)
-    contoursBrown = findContours(imageBrown)
+def getPolygons(color, coordinatesBBOX):
 
-    cornersYellow = extractPolygonCorners('Imagini/yellow.png', "yellow")
-    convertedContoursYellow = convertNumpyToList(contoursYellow)
-    polygonsYellow = extractPolygons(convertedContoursYellow, cornersYellow)
-    drawPolygonsAndContours(polygonsYellow, contoursYellow, imageYellow)
-
-    cornersGreen = extractPolygonCorners('Imagini/green.png', "green")
-    convertedContoursGreen = convertNumpyToList(contoursGreen)
-    polygonsGreen = extractPolygons(convertedContoursGreen, cornersGreen)
-    drawPolygonsAndContours(polygonsGreen, contoursGreen, imageGreen)
-
-    cornersBrown = extractPolygonCorners('Imagini/brown.png', "brown")
-    convertedContoursBrown = convertNumpyToList(contoursBrown)
-    polygonsBrown = extractPolygons(convertedContoursBrown, cornersBrown)
-    drawPolygonsAndContours(polygonsBrown, contoursBrown, imageBrown)
-
-    # TESTING
-    #'''
-    polygonsCoordsBrown = []
-
-    for poly in polygonsBrown:
-        coords = pixelsIndicesToCoordinates(poly, 250, 250, coordinatesBBOX)
-        polygonsCoordsBrown.append(coords)
+    path = "Imagini/" + color + ".png"
+    image = loadImage(path)
+    contours = findContours(image)
+    corners = extractPolygonCorners(path, color)
+    convertedContours = convertNumpyToList(contours)
+    polygons = extractPolygons(convertedContours, corners)
     
-    j = createParcelRecordJson(polygonsCoordsBrown)
-    print(j)
+    # Optional step for visualising the results
+    drawPolygonsAndContours(polygons, contours, image)
+
+    polygonsCoords = []
+    for poly in polygons:
+        coords = pixelsIndicesToCoordinates(poly, HEIGHT, WIDTH, coordinatesBBOX)
+        polygonsCoords.append(coords)
+
+    return polygonsCoords
+
+
+def main():
+    #np.set_printoptions(threshold=sys.maxsize)
+    #data set (should come from REST later on)
+    polygonCoordinates = [27.199243, 45.910026, 27.209468, 45.911885, 27.209607, 45.906525, 27.200563, 45.904793]
+    coordinatesBBOX = [3028959.60, 5766239.96, 3027805.88, 5765105.34]
+
+    dataProcessing(coordinatesBBOX, polygonCoordinates)
+    createColorMasks()
+
+    greenPolygons = getPolygons("green", coordinatesBBOX)
+    yellowPolygons = getPolygons("yellow", coordinatesBBOX)
+    brownPolygons = getPolygons("brown", coordinatesBBOX)
+
+    greenJson = createParcelRecordJson(greenPolygons)
+    yellowJson = createParcelRecordJson(yellowPolygons)
+    brownJson = createParcelRecordJson(brownPolygons)
+    
+    #print(greenJson)
+
     #'''
 
 if __name__ == '__main__':

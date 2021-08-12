@@ -32,9 +32,10 @@ def createManagementZoneJson(polygon):
 def createPolygonJson(polygon):
     polygonJson = createSimpleDictionary("urn:demeter:MgmtZone:Geom:", "Polygon")
 
-    coordsString = "Polygon ((" + str(polygon[0][0]) + " " + str(polygon[0][1])
+    coordsString = "Polygon (("
 
-    for coords in polygon[1:]:
+    # NU E GATA
+    for coords in polygon:
         coordsString += ", " + str(coords[0]) + " " + str(coords[1])
 
     coordsString += "))"
