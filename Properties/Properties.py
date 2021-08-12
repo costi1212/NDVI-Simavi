@@ -1,5 +1,6 @@
-length = 250
-width = 250
+HEIGHT = 250
+WIDTH = 250
+croppedImageBlackBackground = 'Imagini/dst.png'
 colors = ['green', 'yellow', 'brown']
 imageLocation = 'Imagini/Imagine.png'
 date = '2021-05-15'
