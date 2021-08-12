@@ -43,7 +43,7 @@ def main():
 
 
     # TESTING
-    '''
+    #'''
     polygonsCoordsBrown = []
 
     for poly in polygonsBrown:
@@ -52,7 +52,7 @@ def main():
     
     j = createParcelRecordJson(polygonsCoordsBrown)
     print(j)
-    '''
+    #'''
 
 if __name__ == '__main__':
     main()
