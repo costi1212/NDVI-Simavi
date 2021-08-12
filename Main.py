@@ -3,7 +3,6 @@ import requests
 #import PyLd
 from PIL import Image
 import io
-
 from Properties.Properties import *
 from Repository.Conversions import *
 from Repository.ImageEditing import *
