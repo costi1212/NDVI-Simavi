@@ -1,0 +1,11 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+
+/JsonOutputs/
+
+######################
+# Visual Studio Code
+######################
+.vscode/
