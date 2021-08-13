@@ -1,43 +1,71 @@
 import json
 import uuid
 
+def createJson(polygonList):
+
+    mainJson = {}
+    
+    agriParcelRecordJson = createAgriParcelRecordJson()
+
+    graph = []
+    mgmtZoneIdList = []
+    for poly in polygonList:
+        mgmtZoneJson = createManagementZoneJson(poly)
+        geomJson = createGeomJson(poly)
+        mgmtZoneJson["hasGeometry"] = geomJson["@id"]
+        mgmtZoneIdList.append(mgmtZoneJson["@id"])
+        graph.append(mgmtZoneJson)
+        graph.append(geomJson)
+
+    agriParcelRecordJson["containsZone"] = mgmtZoneIdList
+    graph.append(agriParcelRecordJson)
+    
+    mainJson["graph"] = graph
+    mainJson["@context"] = "https://w3id.org/demeter/agri-context.jsonld"
+
+    return json.dumps(mainJson)
+
+
 # Creates a python dictionary with the common fields of all
 # JSON entries (id and type).
-
-
 def createSimpleDictionary(id, type):
     simpleDict = {"@id": id + str(uuid.uuid4()), "@type": type}
+    #simpleDict = {"@id": id, "@type": type}
     return simpleDict
 
 
-def createParcelRecordJson(polygons):
-    parcelRecordJson = createSimpleDictionary("urn:demeter:AgriParcelRecord:", "AgriParcelRecord")
+def createAgriParcelRecordJson():
+    
+    agriParcelRecordJson = createSimpleDictionary("urn:demeter:AgriParcelRecord:", "AgriParcelRecord")
 
-    zoneList = []
-    for poly in polygons:
-        zone = createManagementZoneJson(poly)
-        zoneList.append(zone)
-
-    parcelRecordJson["containsZone"] = zoneList
-    return json.dumps(parcelRecordJson)
+    # nu cred ca trebuie generata asta
+    agriParcelRecordJson["hasAgriParcel"] = "urn:demeter:AgriParcel:" + str(uuid.uuid4())
+    
+    return agriParcelRecordJson
 
 
 def createManagementZoneJson(polygon):
     mgmtZoneJson = createSimpleDictionary("urn:demeter:MgmtZone:", "ManagementZone")
-    hasGeometry = createPolygonJson(polygon)
-    mgmtZoneJson["hasGeometry"] = hasGeometry
+    
+    # trebuie sa ajunga culoarea si aria aici
+    #mgmtZoneJson["code"] = 
+    #mgmtZoneJson["area"] =
+
     return mgmtZoneJson
 
 
-def createPolygonJson(polygon):
-    polygonJson = createSimpleDictionary("urn:demeter:MgmtZone:Geom:", "Polygon")
+def createGeomJson(polygon):
 
-    coordsString = "Polygon (("
+    geomJson = createSimpleDictionary("urn:demeter:MgmtZone:Geom:", "POLYGON")
+    
+    coordsString = "POLYGON (("
 
-    # NU E GATA
-    for coords in polygon:
-        coordsString += ", " + str(coords[0]) + " " + str(coords[1])
+    # de rezolvat virgula la final
+    for coords in polygon[:-1]:
+        coordsString += str(coords[0]) + " " + str(coords[1])+ ", "
 
     coordsString += "))"
-    polygonJson["asWKT"] = coordsString
-    return polygonJson
+
+    geomJson["asWKT"] = coordsString
+
+    return geomJson

@@ -1,4 +1,4 @@
-from Repository.JsonFunctions import createParcelRecordJson
+from Repository.JsonFunctions import createJson
 import requests
 # import PyLd
 from PIL import Image
@@ -59,21 +59,18 @@ def main():
     # data set (should come from REST later on)
     dataProcessing(coordinatesBBOX, polygonCoordinates)
     createColorMasks()
+    
     OutputFile = open(jsonOutputs, 'w')
     for i in colors:
         Polygons = getPolygons(i, coordinatesBBOX)
         print(Polygons)
-        Json = createParcelRecordJson(Polygons)
+        #ordinea itemilor din json este gresita
+        Json = createJson(Polygons)
         #print(Json)
         OutputFile.write(i.upper())
         OutputFile.write(Json)
         OutputFile.write('\n \n \n')
-
-
-    # print(greenJson)
-
-    # '''
-
+    
 
 if __name__ == '__main__':
     main()
