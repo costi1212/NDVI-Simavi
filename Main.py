@@ -9,8 +9,8 @@ from Repository.ImageEditing import *
 from Repository.PolygonPoints import *
 
 
-def requestImage(date, bbox):
-    url = f'https://services.terrascope.be/wms/v2?service=WMS&version=1.3.0&request=GetMap&layers=CGS_S2_NDVI&format=image/png&time={date}&width=250&height=250&bbox={bbox}&srs=EPSG:3857'
+def requestImage(imageDate, bbox):
+    url = f'https://services.terrascope.be/wms/v2?service=WMS&version=1.3.0&request=GetMap&layers=CGS_S2_NDVI&format=image/png&width=250&height=250&srs=EPSG:3857&time={date}&bbox={bbox}'
     response = requests.get(url)
     # poate sa adaugam un 
     # if response.status_code == 200:
@@ -19,10 +19,10 @@ def requestImage(date, bbox):
 
 
 # Processing the data and croping the image.
-def dataProcessing(coordinatesBBOX, polygonCoordinates):
+def dataProcessing(coordinatesBBOX, polygonCoordinates, imageDate):
     pixels = mapPolygonPointsOnImage(coordinatesBBOX, polygonCoordinates, HEIGHT, WIDTH)
     coordinatesBBOX = verifyOrderOfBboxCoordinates(coordinatesBBOX)
-    responseGet = requestImage(date, listToString(coordinatesBBOX))
+    responseGet = requestImage(imageDate, listToString(coordinatesBBOX))
     bytes = bytearray(responseGet)
     image = Image.open(io.BytesIO(bytes))
     image.save(imageLocation)
@@ -57,7 +57,7 @@ def getPolygons(color, coordinatesBBOX):
 def main():
     # np.set_printoptions(threshold=sys.maxsize)
     # data set (should come from REST later on)
-    dataProcessing(coordinatesBBOX, polygonCoordinates)
+    dataProcessing(coordinatesBBOX, polygonCoordinates, date)
     createColorMasks()
     
     OutputFile = open(jsonOutputs, 'w')
