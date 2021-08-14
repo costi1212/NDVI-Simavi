@@ -24,7 +24,8 @@ def convertNumpyToList(nparray):
 
 def stringToFloatList(inputString):
     li = list(inputString.split(","))
-    [float(i) for i in li]
+    for i in range(len(li)):
+        li[i] = float(li[i])
     return li
 
 
@@ -55,7 +56,7 @@ def verifyOrderOfBboxCoordinates(bbox):
     return bbox
 
 
-def convertCoordinates(coordinatesList):
+def epsg3857ToEpsg4326(coordinatesList):
     newCoordinatesList = []
     # transformer = Transformer.from_crs("epsg:3857", "epsg:4326")
     transformer = Transformer.from_crs("epsg:3857", "epsg:4326", always_xy=True)
@@ -69,8 +70,40 @@ def convertCoordinates(coordinatesList):
     return newCoordinatesList
 
 
+def epsg4326ToEpsg3857(coordinatesList):
+    newCoordinatesList = []
+    # transformer = Transformer.from_crs("epsg:3857", "epsg:4326")
+    transformer = Transformer.from_crs("epsg:4326", "epsg:3857", always_xy=True)
+    for i in range(0, len(coordinatesList), 2):
+        x = coordinatesList[i]
+        y = coordinatesList[i + 1]
+        x2, y2 = transformer.transform(x, y)
+        pair = (x2, y2)
+        newCoordinatesList.append(x2)
+        newCoordinatesList.append(y2)
+    return newCoordinatesList
+
+
+def getBBOXFromParcelCoordinates(coordinatesList):
+
+    coordinatesBBOX = []
+    xList = coordinatesList[0::2]
+    yList = coordinatesList[1::2]
+    coordinatesBBOXMinX = min(xList)
+    coordinatesBBOXMinY = min(yList)
+    coordinatesBBOXMaxX = max(xList)
+    coordinatesBBOXMaxY = max(yList)
+    coordinatesBBOX.append(coordinatesBBOXMinX)
+    coordinatesBBOX.append(coordinatesBBOXMinY)
+    coordinatesBBOX.append(coordinatesBBOXMaxX)
+    coordinatesBBOX.append(coordinatesBBOXMaxY)
+    print(coordinatesBBOX)
+    coordinatesBBOX = epsg4326ToEpsg3857(coordinatesBBOX)
+    return coordinatesBBOX
+
+
 def mapPointOnImage(bbox, point):
-    bbox = convertCoordinates(bbox)
+    bbox = epsg3857ToEpsg4326(bbox)
 
 
 def pixelMapValue(xmax, xorigin, ymax, yorigin, heigth, width):
@@ -86,7 +119,7 @@ def pixelMapValue(xmax, xorigin, ymax, yorigin, heigth, width):
 
 def mapPolygonPointsOnImage(bbox, polygonCoordinates, heigth, width):
     bbox = verifyOrderOfBboxCoordinates(bbox)
-    bbox = convertCoordinates(bbox)
+    bbox = epsg3857ToEpsg4326(bbox)
     bboxPoint1 = [bbox[0], bbox[1]]
     bboxPoint2 = [bbox[2], bbox[3]]
     originPoint = [bbox[0], bbox[3]]
@@ -100,7 +133,7 @@ def mapPolygonPointsOnImage(bbox, polygonCoordinates, heigth, width):
     return pixelPositions
 
 def pixelsIndicesToCoordinates(pixelIndices, heigth, width, bbox):
-    bbox = convertCoordinates(bbox)
+    bbox = epsg3857ToEpsg4326(bbox)
     values = pixelMapValue(bbox[0], bbox[2], bbox[1], bbox[3], heigth, width)
     mapCoordinates = []
     originPoint = [bbox[0], bbox[3]]
