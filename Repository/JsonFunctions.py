@@ -1,6 +1,8 @@
 import json
 import uuid
 
+from numpy.lib.polynomial import poly
+
 def createJson(polygonList):
 
     mainJson = {}
@@ -38,7 +40,7 @@ def createAgriParcelRecordJson():
     
     agriParcelRecordJson = createSimpleDictionary("urn:demeter:AgriParcelRecord:", "AgriParcelRecord")
 
-    # nu cred ca trebuie generata asta
+    # de primit prin request?
     agriParcelRecordJson["hasAgriParcel"] = "urn:demeter:AgriParcel:" + str(uuid.uuid4())
     
     return agriParcelRecordJson
@@ -59,11 +61,14 @@ def createGeomJson(polygon):
     geomJson = createSimpleDictionary("urn:demeter:MgmtZone:Geom:", "POLYGON")
     
     coordsString = "POLYGON (("
-
+    
     # de rezolvat virgula la final
-    for coords in polygon[:-1]:
+    for coords in polygon:
         coordsString += str(coords[0]) + " " + str(coords[1])+ ", "
 
+    #coordsString += str(polygon[-1][0]) + " " + str(polygon[-1][1]) + "))"
+    #coordsString += str(polygon[-1]) + "))"
+    coordsString = coordsString[:-2]
     coordsString += "))"
 
     geomJson["asWKT"] = coordsString

@@ -60,17 +60,18 @@ def main():
     dataProcessing(coordinatesBBOX, polygonCoordinates, date)
     createColorMasks()
     
-    OutputFile = open(jsonOutputs, 'w')
+    OutputFile = open("JsonOutputs/jsonld.json", 'w')
+    
     for i in colors:
         Polygons = getPolygons(i, coordinatesBBOX)
         print(Polygons)
-        #ordinea itemilor din json este gresita
         Json = createJson(Polygons)
-        #print(Json)
         OutputFile.write(i.upper())
         OutputFile.write(Json)
         OutputFile.write('\n \n \n')
     
+    print("done")
+
 
 if __name__ == '__main__':
     main()
