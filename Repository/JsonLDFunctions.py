@@ -1,8 +1,6 @@
 import json
 import uuid
 
-from numpy.lib.polynomial import poly
-
 def createJsonLD(polygonList):
 
     mainJson = {}
