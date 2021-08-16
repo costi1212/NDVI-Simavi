@@ -3,17 +3,17 @@ import uuid
 
 from numpy.lib.polynomial import poly
 
-def createJson(polygonList):
+def createJsonLD(polygonList):
 
     mainJson = {}
     
-    agriParcelRecordJson = createAgriParcelRecordJson()
+    agriParcelRecordJson = createAgriParcelRecordJsonLD()
 
     graph = []
     mgmtZoneIdList = []
     for poly in polygonList:
-        mgmtZoneJson = createManagementZoneJson(poly)
-        geomJson = createGeomJson(poly)
+        mgmtZoneJson = createManagementZoneJsonLD(poly)
+        geomJson = createGeomJsonLD(poly)
         mgmtZoneJson["hasGeometry"] = geomJson["@id"]
         mgmtZoneIdList.append(mgmtZoneJson["@id"])
         graph.append(mgmtZoneJson)
@@ -36,7 +36,7 @@ def createSimpleDictionary(id, type):
     return simpleDict
 
 
-def createAgriParcelRecordJson():
+def createAgriParcelRecordJsonLD():
     
     agriParcelRecordJson = createSimpleDictionary("urn:demeter:AgriParcelRecord:", "AgriParcelRecord")
 
@@ -46,24 +46,24 @@ def createAgriParcelRecordJson():
     return agriParcelRecordJson
 
 
-def createManagementZoneJson(polygon):
+def createManagementZoneJsonLD(polygon):
     mgmtZoneJson = createSimpleDictionary("urn:demeter:MgmtZone:", "ManagementZone")
     
     # trebuie sa ajunga culoarea si aria aici
-    #mgmtZoneJson["code"] = 
-    #mgmtZoneJson["area"] =
+    mgmtZoneJson["code"] = polygon.code
+    mgmtZoneJson["area"] = polygon.area
 
     return mgmtZoneJson
 
 
-def createGeomJson(polygon):
+def createGeomJsonLD(polygon):
 
     geomJson = createSimpleDictionary("urn:demeter:MgmtZone:Geom:", "POLYGON")
     
     coordsString = "POLYGON (("
     
-    for coords in polygon:
-        coordsString += str(coords[1]) + " " + str(coords[0])+ ", "
+    for coords in polygon.coords:
+        coordsString += str(coords[0]) + " " + str(coords[1])+ ", "
 
     coordsString = coordsString[:-2]
     coordsString += "))"

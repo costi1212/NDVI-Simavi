@@ -1,5 +1,6 @@
+from numpy.lib.polynomial import poly
 from Polygon import Polygon
-from Repository.JsonFunctions import createJson
+from Repository.JsonLDFunctions import createJsonLD
 import requests
 # import PyLd
 from PIL import Image
@@ -36,6 +37,7 @@ def createColorMasks():
         colorMask(croppedImageBlackBackground, i)
 
 
+# Returns a list of Polygon objects.
 def getPolygons(color, coordinatesBBOX):
     path = "Imagini/" + color + ".png"
     image = loadImage(path)
@@ -71,20 +73,14 @@ def main():
     createColorMasks()
     
     OutputFile = open(jsonOutputs, 'w')
+    polygonList = []
     
-    '''
     for i in colors:
-        Polygons = getPolygons(i, coordinatesBBOX)
-        print(Polygons)
-        Json = createJson(Polygons)
-        OutputFile.write(Json)
-        OutputFile.write('\n \n \n')
-    '''
-    polygons = getPolygons("yellow", coordinatesBBOX)
+        polygonList += getPolygons(i, coordinatesBBOX)
     
-    #json = createJson(polygons)
-    #OutputFile.write(json)
-
+    json = createJsonLD(polygonList)
+    OutputFile.write(json)
+    
     print("done")
 
 
