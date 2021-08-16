@@ -24,7 +24,7 @@ def calculateArea(coordsList):
     pgon = pg(zip(x, y))
     
     return pgon.area * 100 #fiecare pixel are 10 X 10 m2?
-
+    #return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1))) * 100
 
 def requestImage(imageDate, bbox):
     url = f'https://services.terrascope.be/wms/v2?service=WMS&version=1.3.0&request=GetMap&layers=CGS_S2_NDVI&format=image/png&width=250&height=250&srs=EPSG:3857&time={date}&bbox={bbox}'
