@@ -3,7 +3,7 @@ WIDTH = 250
 url = 'https://services.terrascope.be/wms/v2'
 defaultArguments = '?service=WMS&version=1.3.0&request=GetMap&layers=CGS_S2_NDVI&format=image/png&width=250&height' \
                    '=250&srs=EPSG:3857'
-jsonOutputs = 'JsonOutputs/JsonOutputs.txt'
+jsonOutputs = 'JsonOutputs/JsonOutputs.json'
 croppedImageBlackBackground = 'Imagini/dst.png'
 colors = ['green', 'yellow', 'brown']
 imageLocation = 'Imagini/Imagine.png'

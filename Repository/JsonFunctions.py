@@ -62,12 +62,9 @@ def createGeomJson(polygon):
     
     coordsString = "POLYGON (("
     
-    # de rezolvat virgula la final
     for coords in polygon:
-        coordsString += str(coords[0]) + " " + str(coords[1])+ ", "
+        coordsString += str(coords[1]) + " " + str(coords[0])+ ", "
 
-    #coordsString += str(polygon[-1][0]) + " " + str(polygon[-1][1]) + "))"
-    #coordsString += str(polygon[-1]) + "))"
     coordsString = coordsString[:-2]
     coordsString += "))"
 

@@ -1,3 +1,4 @@
+from Polygon import Polygon
 from Repository.JsonFunctions import createJson
 import requests
 # import PyLd
@@ -41,17 +42,26 @@ def getPolygons(color, coordinatesBBOX):
     contours = findContours(image)
     corners = extractPolygonCorners(path, color)
     convertedContours = convertNumpyToList(contours)
-    polygons = extractPolygons(convertedContours, corners)
+    polygonCoords = extractPolygons(convertedContours, corners)
 
     # Optional step for visualising the results
-    drawPolygonsAndContours(polygons, contours, image)
+    drawPolygonsAndContours(polygonCoords, contours, image)
 
-    polygonsCoords = []
-    for poly in polygons:
+    colorCode = {"green": 0, "yellow": 1, "brown": 2}
+    polygonList = []
+    for poly in polygonCoords:
         coords = pixelsIndicesToCoordinates(poly, HEIGHT, WIDTH, coordinatesBBOX)
-        polygonsCoords.append(coords)
+        
+        # find area here
+        area = 0
+        
+        p = Polygon(coords, colorCode[color.lower()], area)
+        #polygonsCoords.append(coords)
+        polygonList.append(p)
+    
 
-    return polygonsCoords
+    return polygonList
+    #return polygonsCoords
 
 
 def main():
@@ -60,16 +70,21 @@ def main():
     dataProcessing(coordinatesBBOX, polygonCoordinates, date)
     createColorMasks()
     
-    OutputFile = open("JsonOutputs/jsonld.json", 'w')
+    OutputFile = open(jsonOutputs, 'w')
     
+    '''
     for i in colors:
         Polygons = getPolygons(i, coordinatesBBOX)
         print(Polygons)
         Json = createJson(Polygons)
-        OutputFile.write(i.upper())
         OutputFile.write(Json)
         OutputFile.write('\n \n \n')
+    '''
+    polygons = getPolygons("yellow", coordinatesBBOX)
     
+    #json = createJson(polygons)
+    #OutputFile.write(json)
+
     print("done")
 
 
