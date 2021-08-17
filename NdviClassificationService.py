@@ -6,10 +6,14 @@ import requests
 import pandas as pd
 import ast
 
+from Main import calculateArea
+from Polygon import Polygon
 from Repository.Conversions import *
+from Repository.ImageSize import *
 from Repository.ImageEditing import *
 from Properties.Properties import *
 from Repository.JsonFunctions import *
+from Repository.JsonLDFunctions import *
 from Repository.PolygonPoints import *
 from Repository.Conversions import mapPolygonPointsOnImage, verifyOrderOfBboxCoordinates
 
@@ -23,11 +27,10 @@ def requestImage(imageDate, bbox):
     return response.content
 
 
-def dataProcessing(polygonCoordinates, dateImage):
+def dataProcessing(polygonCoordinates, dateImage, height, width):
     polygonCoordinatesFloatList = stringToFloatList(polygonCoordinates)
     coordinatesBBOX = getBBOXFromParcelCoordinates(polygonCoordinatesFloatList)
-    print(coordinatesBBOX)
-    pixels = mapPolygonPointsOnImage(coordinatesBBOX, polygonCoordinatesFloatList, HEIGHT, WIDTH)
+    pixels = mapPolygonPointsOnImage(coordinatesBBOX, polygonCoordinatesFloatList, height, width)
     coordinatesBBOX = verifyOrderOfBboxCoordinates(coordinatesBBOX)
     responseGet = requestImage(dateImage, listToString(coordinatesBBOX))
     bytes = bytearray(responseGet)
@@ -42,23 +45,32 @@ def createColorMasks():
         colorMask(croppedImageBlackBackground, i)
 
 
-def getPolygons(color, coordinatesBBOX):
+def getPolygons(color, coordinatesBBOX, height, width):
     path = "Imagini/" + color + ".png"
     image = loadImage(path)
     contours = findContours(image)
     corners = extractPolygonCorners(path, color)
     convertedContours = convertNumpyToList(contours)
-    polygons = extractPolygons(convertedContours, corners)
+    polygonCoords = extractPolygons(convertedContours, corners)
 
     # Optional step for visualising the results
-    drawPolygonsAndContours(polygons, contours, image)
+    drawPolygonsAndContours(polygonCoords, contours, image)
 
-    polygonsCoords = []
-    for poly in polygons:
-        coords = pixelsIndicesToCoordinates(poly, HEIGHT, WIDTH, coordinatesBBOX)
-        polygonsCoords.append(coords)
+    # Dictionary used to convert color names to the coresponding codes.
+    colorCode = {"brown": 0, "yellow": 1, "green": 2}
+    polygonList = []
+    for poly in polygonCoords:
 
-    return polygonsCoords
+        # Candidates that have less than 3 points cannot be polygons.
+        if len(poly) < 3:
+            continue
+
+        coords = pixelsIndicesToCoordinates(poly, height, width, coordinatesBBOX)
+        area = calculateArea(poly)
+        p = Polygon(coords, colorCode[color.lower()], area)
+        polygonList.append(p)
+
+    return polygonList
 
 
 app = Flask('NDVIClassification')
@@ -73,21 +85,30 @@ def home():
 @app.route('/simpleJson', methods=['GET', 'POST'])
 def returnSimpleJson():
     args = request.json
-    coordinatesBBOX = dataProcessing(args['polygonCoordinates'], args['date'])
-    createColorMasks()
-    #OutputFile = open(jsonOutputs, 'w')
-    outputJson = []
+    width = getWidth(getOxDistance(polygonCoordinates))
+    print(width)
+    height = getHeight(getOyDistance(polygonCoordinates))
+    print(height)
+    BBOXcoordinates = dataProcessing(args['polygonCoordinates'], args['date'], height, width)
+    polygonList = []
     for i in colors:
-        Polygons = getPolygons(i, coordinatesBBOX)
-        print(Polygons)
-        # ordinea itemilor din json este gresita
-        Json = createJson(Polygons)
-        outputJson.append(Json)
-        # print(Json)
-        #OutputFile.write(i.upper())
-        #OutputFile.write(Json)
-        #OutputFile.write('\n \n \n')
-    return jsonify(outputJson)
+        polygonList += getPolygons(i, BBOXcoordinates, height, width)
+    json = createJson(polygonList)
+    return json
+
+
+@app.route('/jsonLD', methods=['GET', 'POST'])
+def returnJsonLD():
+    args = request.json
+    width = getWidth(getOxDistance(stringToFloatList(args['polygonCoordinates'])))
+    height = getHeight(getOyDistance(stringToFloatList(args['polygonCoordinates'])))
+    BBOXcoordinates = dataProcessing(args['polygonCoordinates'], args['date'], height, width)
+    createColorMasks()
+    polygonList = []
+    for i in colors:
+        polygonList += getPolygons(i, BBOXcoordinates, height, width)
+    jsonLD = createJsonLD(polygonList)
+    return jsonLD
 
 
 app.run()
