@@ -1,3 +1,4 @@
+from Repository.JsonFunctions import createJson
 from numpy.lib.polynomial import poly
 from Polygon import Polygon
 from Repository.JsonLDFunctions import createJsonLD
@@ -65,7 +66,7 @@ def getPolygons(color, coordinatesBBOX):
     drawPolygonsAndContours(polygonCoords, contours, image)
 
     # Dictionary used to convert color names to the coresponding codes.
-    colorCode = {"green": 0, "yellow": 1, "brown": 2}
+    colorCode = {"brown": 0, "yellow": 1, "green": 2}
     polygonList = []
     for poly in polygonCoords:
         
@@ -87,14 +88,18 @@ def main():
     dataProcessing(coordinatesBBOX, polygonCoordinates, date)
     createColorMasks()
     
-    OutputFile = open(jsonOutputs, 'w')
+    outputJsonLd = open("JsonOutputs/PSDClassification.jsonld", 'w')
+    outputJson = open("JsonOutputs/PSDClassification.json", 'w')
     polygonList = []
     
     for i in colors:
         polygonList += getPolygons(i, coordinatesBBOX)
     
-    json = createJsonLD(polygonList)
-    OutputFile.write(json)
+    jsonLD = createJsonLD(polygonList)
+    outputJsonLd.write(jsonLD)
+
+    json = createJson(polygonList)
+    outputJson.write(json)
     
     print("done")
 

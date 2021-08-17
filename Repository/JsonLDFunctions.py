@@ -3,7 +3,7 @@ import uuid
 
 def createJsonLD(polygonList):
 
-    mainJson = {}
+    mainJsonLD = {}
     
     agriParcelRecordJson = createAgriParcelRecordJsonLD()
 
@@ -20,25 +20,25 @@ def createJsonLD(polygonList):
     agriParcelRecordJson["containsZone"] = mgmtZoneIdList
     graph.append(agriParcelRecordJson)
     
-    mainJson["graph"] = graph
-    mainJson["@context"] = "https://w3id.org/demeter/agri-context.jsonld"
+    mainJsonLD["graph"] = graph
+    mainJsonLD["@context"] = "https://w3id.org/demeter/agri-context.jsonld"
 
-    return json.dumps(mainJson)
+    return json.dumps(mainJsonLD)
 
 
 # Creates a python dictionary with the common fields of all
 # JSON entries (id and type).
 def createSimpleDictionary(id, type):
     simpleDict = {"@id": id + str(uuid.uuid4()), "@type": type}
-    #simpleDict = {"@id": id, "@type": type}
     return simpleDict
 
 
 def createAgriParcelRecordJsonLD():
     
+    # de primit prin request
     agriParcelRecordJson = createSimpleDictionary("urn:demeter:AgriParcelRecord:", "AgriParcelRecord")
 
-    # de primit prin request?
+    # de primit prin request
     agriParcelRecordJson["hasAgriParcel"] = "urn:demeter:AgriParcel:" + str(uuid.uuid4())
     
     return agriParcelRecordJson
@@ -47,7 +47,6 @@ def createAgriParcelRecordJsonLD():
 def createManagementZoneJsonLD(polygon):
     mgmtZoneJson = createSimpleDictionary("urn:demeter:MgmtZone:", "ManagementZone")
     
-    # trebuie sa ajunga culoarea si aria aici
     mgmtZoneJson["code"] = polygon.code
     mgmtZoneJson["area"] = polygon.area
 
