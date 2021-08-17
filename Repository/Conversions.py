@@ -97,7 +97,7 @@ def getBBOXFromParcelCoordinates(coordinatesList):
     coordinatesBBOX.append(coordinatesBBOXMinY)
     coordinatesBBOX.append(coordinatesBBOXMaxX)
     coordinatesBBOX.append(coordinatesBBOXMaxY)
-    print(coordinatesBBOX)
+    #print(coordinatesBBOX)
     coordinatesBBOX = epsg4326ToEpsg3857(coordinatesBBOX)
     return coordinatesBBOX
 

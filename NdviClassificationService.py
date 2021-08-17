@@ -1,11 +1,10 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 from PIL import Image
 import io
 from flask_restful import Resource, Api, reqparse
 import requests
 import pandas as pd
 import ast
-
 
 from Repository.Conversions import *
 from Repository.ImageEditing import *
@@ -14,12 +13,9 @@ from Repository.JsonFunctions import *
 from Repository.PolygonPoints import *
 from Repository.Conversions import mapPolygonPointsOnImage, verifyOrderOfBboxCoordinates
 
-app = Flask('NDVIClassificaton')
-api = Api(app)
-
 
 def requestImage(imageDate, bbox):
-    urlRequest = url+defaultArguments+f'&time={imageDate}'+f'&bbox={bbox}'
+    urlRequest = url + defaultArguments + f'&time={imageDate}' + f'&bbox={bbox}'
     response = requests.get(urlRequest)
     # poate sa adaugam un
     # if response.status_code == 200:
@@ -65,34 +61,33 @@ def getPolygons(color, coordinatesBBOX):
     return polygonsCoords
 
 
-class Controller(Resource):
-    def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('date', required = True)
-        parser.add_argument('area', required = True)
-        parser.add_argument('id', required = True)
-        parser.add_argument('coordinates', required = True)
-        args = parser.parse_args()
-        print(args)
-        coordinatesBBOX = dataProcessing(args['coordinates'], args['date'])
-        createColorMasks()
-        OutputFile = open(jsonOutputs, 'w')
-        outputJson = []
-        for i in colors:
-            Polygons = getPolygons(i, coordinatesBBOX)
-            print(Polygons)
-            # ordinea itemilor din json este gresita
-            Json = createJson(Polygons)
-            outputJson.append(Json)
-            # print(Json)
-            OutputFile.write(i.upper())
-            OutputFile.write(Json)
-            OutputFile.write('\n \n \n')
-        return outputJson
-    pass
+app = Flask('NDVIClassification')
+app.config["DEBUG"] = True
 
 
-api.add_resource(Controller,'/simpleJson')
+@app.route('/')
+def home():
+    return "<h1>Service Documention</h1><p>Information to be added later.</p>"
 
-if __name__ == '__main__':
-    app.run()
+
+@app.route('/simpleJson', methods=['GET', 'POST'])
+def returnSimpleJson():
+    args = request.json
+    coordinatesBBOX = dataProcessing(args['polygonCoordinates'], args['date'])
+    createColorMasks()
+    #OutputFile = open(jsonOutputs, 'w')
+    outputJson = []
+    for i in colors:
+        Polygons = getPolygons(i, coordinatesBBOX)
+        print(Polygons)
+        # ordinea itemilor din json este gresita
+        Json = createJson(Polygons)
+        outputJson.append(Json)
+        # print(Json)
+        #OutputFile.write(i.upper())
+        #OutputFile.write(Json)
+        #OutputFile.write('\n \n \n')
+    return jsonify(outputJson)
+
+
+app.run()
