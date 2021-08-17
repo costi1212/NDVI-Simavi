@@ -140,6 +140,9 @@ def pixelsIndicesToCoordinates(pixelIndices, heigth, width, bbox):
     for i in range(0, len(pixelIndices)):
         pixelPosX = originPoint[0] + pixelIndices[i][0] * values[0]
         pixelPosY = originPoint[1] + pixelIndices[i][1] * values[1]
-        pair = [pixelPosX, pixelPosY]
+        
+        # inverted order
+        pair = [pixelPosY, pixelPosX]
+        #pair = [pixelPosX, pixelPosY]
         mapCoordinates.append(pair)
     return mapCoordinates
