@@ -63,7 +63,7 @@ def getPolygons(color, coordinatesBBOX):
     polygonCoords = extractPolygons(convertedContours, corners)
 
     # Optional step for visualising the results
-    drawPolygonsAndContours(polygonCoords, contours, image)
+    #drawPolygonsAndContours(polygonCoords, contours, image)
 
     # Dictionary used to convert color names to the coresponding codes.
     colorCode = {"brown": 0, "yellow": 1, "green": 2}
