@@ -93,7 +93,7 @@ def getNDVIClassificationAsJson():
     for i in colors:
         polygonList += getPolygons(i, BBOXcoordinates, height, width)
     json = createJson(polygonList)
-    return jsonify(json)
+    return json
 
 
 @app.route('/api/jsonld/v1/ndvi-classification', methods=['POST'])

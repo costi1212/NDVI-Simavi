@@ -5,8 +5,8 @@ import numpy as np
 # Loads image from given path.
 def loadImage(imagePath):
     image = cv2.imread(imagePath)
-    cv2.imshow('input image',image)
-    cv2.waitKey(0)
+    #cv2.imshow('input image',image)
+    #cv2.waitKey(0)
     return image
 
 
@@ -55,8 +55,8 @@ def extractPolygonCorners(imagePath, color):
             if (img[i][j] == [0, 0, 255]).all():
                 corners.append([j, i])
 
-    cv2.imshow('corners', img)
-    cv2.imwrite(f'Imagini/{color}points.png', img)
+    #cv2.imshow('corners', img)
+    #cv2.imwrite(f'Imagini/{color}points.png', img)
     return corners
 
 
@@ -69,8 +69,8 @@ def drawPolygonsAndContours(polygons, contours, image):
         for c in p:
             cv2.circle(image, (c[0],c[1]), 1, (b,r,g), 1)
 
-    #cv2.imshow("polygons", image)
+    cv2.imshow("polygons", image)
     cv2.drawContours(image, contours, -1, (255, 0, 255), 3)
-    #cv2.imshow('contours', image)
+    cv2.imshow('contours', image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
