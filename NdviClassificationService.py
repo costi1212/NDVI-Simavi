@@ -18,8 +18,8 @@ from Repository.PolygonPoints import *
 from Repository.Conversions import mapPolygonPointsOnImage, verifyOrderOfBboxCoordinates
 
 
-def requestImage(imageDate, bbox):
-    urlRequest = url + defaultArguments + f'&time={imageDate}' + f'&bbox={bbox}'
+def requestImage(imageDate, bbox, height, width):
+    urlRequest = url + defaultArguments + f'&time={imageDate}' + f'&bbox={bbox}'+f'&height={height}'+f'&width={width}'
     response = requests.get(urlRequest)
     # poate sa adaugam un
     # if response.status_code == 200:
@@ -32,7 +32,7 @@ def dataProcessing(polygonCoordinates, dateImage, height, width):
     coordinatesBBOX = getBBOXFromParcelCoordinates(polygonCoordinatesFloatList)
     pixels = mapPolygonPointsOnImage(coordinatesBBOX, polygonCoordinatesFloatList, height, width)
     coordinatesBBOX = verifyOrderOfBboxCoordinates(coordinatesBBOX)
-    responseGet = requestImage(dateImage, listToString(coordinatesBBOX))
+    responseGet = requestImage(dateImage, listToString(coordinatesBBOX), height, width)
     bytes = bytearray(responseGet)
     image = Image.open(io.BytesIO(bytes))
     image.save(imageLocation)
@@ -78,27 +78,26 @@ app.config["DEBUG"] = True
 
 
 @app.route('/')
-def home():
+def viezureHome():
     return "<h1>Service Documention</h1><p>Information to be added later.</p>"
 
 
-@app.route('/simpleJson', methods=['GET', 'POST'])
-def returnSimpleJson():
+@app.route('/api/json/v1/ndvi-classification', methods=['POST'])
+def getNDVIClassificationAsJson():
     args = request.json
-    width = getWidth(getOxDistance(polygonCoordinates))
-    print(width)
-    height = getHeight(getOyDistance(polygonCoordinates))
-    print(height)
+    width = getWidth(getOxDistance(stringToFloatList(args['polygonCoordinates'])))
+    height = getHeight(getOyDistance(stringToFloatList(args['polygonCoordinates'])))
     BBOXcoordinates = dataProcessing(args['polygonCoordinates'], args['date'], height, width)
+    createColorMasks()
     polygonList = []
     for i in colors:
         polygonList += getPolygons(i, BBOXcoordinates, height, width)
     json = createJson(polygonList)
-    return json
+    return jsonify(json)
 
 
-@app.route('/jsonLD', methods=['GET', 'POST'])
-def returnJsonLD():
+@app.route('/api/jsonld/v1/ndvi-classification', methods=['POST'])
+def getNDVIClassificationAsJsonLD():
     args = request.json
     width = getWidth(getOxDistance(stringToFloatList(args['polygonCoordinates'])))
     height = getHeight(getOyDistance(stringToFloatList(args['polygonCoordinates'])))

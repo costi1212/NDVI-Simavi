@@ -7,8 +7,9 @@ def createJson(polygonList):
 
     #mainJson["statistics"] = 
     mainJson["map"] = createMapJson(polygonList)
-    
-    return json.dumps(mainJson)
+
+    return mainJson
+    #return json.dumps(mainJson)
 
 
 def createMapJson(polygonList):
