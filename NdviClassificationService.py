@@ -27,9 +27,8 @@ def requestImage(imageDate, bbox, height, width):
     return response.content
 
 
-def dataProcessing(polygonCoordinates, dateImage, height, width):
+def dataProcessing(coordinatesBBOX, polygonCoordinates, dateImage, height, width):
     polygonCoordinatesFloatList = stringToFloatList(polygonCoordinates)
-    coordinatesBBOX = getBBOXFromParcelCoordinates(polygonCoordinatesFloatList)
     pixels = mapPolygonPointsOnImage(coordinatesBBOX, polygonCoordinatesFloatList, height, width)
     coordinatesBBOX = verifyOrderOfBboxCoordinates(coordinatesBBOX)
     responseGet = requestImage(dateImage, listToString(coordinatesBBOX), height, width)
@@ -37,7 +36,7 @@ def dataProcessing(polygonCoordinates, dateImage, height, width):
     image = Image.open(io.BytesIO(bytes))
     image.save(imageLocation)
     cropImage(imageLocation, pixels)
-    return coordinatesBBOX
+
 
 
 def createColorMasks():
@@ -85,13 +84,17 @@ def viezureHome():
 @app.route('/api/json/v1/ndvi-classification', methods=['POST'])
 def getNDVIClassificationAsJson():
     args = request.json
-    width = getWidth(getOxDistance(stringToFloatList(args['polygonCoordinates'])))
-    height = getHeight(getOyDistance(stringToFloatList(args['polygonCoordinates'])))
-    BBOXcoordinates = dataProcessing(args['polygonCoordinates'], args['date'], height, width)
+    coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
+    print(coordinatesBBOX)
+    width = getWidth(getOxDistance(coordinatesBBOX))
+    print(width)
+    height = getHeight(getOyDistance(coordinatesBBOX))
+    print(height)
+    dataProcessing(coordinatesBBOX, args['polygonCoordinates'], args['date'], height, width)
     createColorMasks()
     polygonList = []
     for i in colors:
-        polygonList += getPolygons(i, BBOXcoordinates, height, width)
+        polygonList += getPolygons(i, coordinatesBBOX, height, width)
     json = createJson(polygonList)
     return json
 

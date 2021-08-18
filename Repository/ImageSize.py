@@ -2,20 +2,19 @@ from Repository.Conversions import *
 from Properties.Properties import *
 
 
-def getOxDistance(polygonCoordinates):
-    coordinates = getBBOXFromParcelCoordinates(polygonCoordinates)
-    coordinates = epsg3857ToEpsg4326(coordinates)
-    coordinates[2] = coordinates[0]
-    return getDistanceFromLatLonInM(coordinates[0], coordinates[1],
-                                    coordinates[2], coordinates[3])
+def getOxDistance(BBOXCoordinates):
+    BBOXCoord = epsg3857ToEpsg4326(BBOXCoordinates)
+    BBOXCoord[2] = BBOXCoord[0]
+    return getDistanceFromLatLonInM(BBOXCoord[1], BBOXCoord[0],
+                                    BBOXCoord[3], BBOXCoord[2])
 
 
-def getOyDistance(polygonCoordinates):
-    coordinates = getBBOXFromParcelCoordinates(polygonCoordinates)
-    coordinates = epsg3857ToEpsg4326(coordinates)
-    coordinates[3] = coordinates[1]
-    return getDistanceFromLatLonInM(coordinates[0], coordinates[1],
-                                    coordinates[2], coordinates[3])
+def getOyDistance(BBOXCoordinates):
+    BBOXCoord = epsg3857ToEpsg4326(BBOXCoordinates)
+    BBOXCoord[3] = BBOXCoord[1]
+    return getDistanceFromLatLonInM(BBOXCoord[1], BBOXCoord[0],
+                                    BBOXCoord[3], BBOXCoord[2])
+
 
 
 def getWidth(OxDistance):
