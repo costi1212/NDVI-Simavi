@@ -17,6 +17,7 @@ def createJsonLD(polygonList):
         graph.append(mgmtZoneJson)
         graph.append(geomJson)
 
+    # remove
     agriParcelRecordJson["containsZone"] = mgmtZoneIdList
     graph.append(agriParcelRecordJson)
     
