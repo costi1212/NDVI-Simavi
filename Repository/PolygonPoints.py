@@ -1,6 +1,7 @@
 import random
 import cv2
 import numpy as np
+from shapely.geometry import Polygon as pg
 
 # Loads image from given path.
 def loadImage(imagePath):
@@ -58,6 +59,21 @@ def extractPolygonCorners(imagePath, color):
     #cv2.imshow('corners', img)
     #cv2.imwrite(f'Imagini/{color}points.png', img)
     return corners
+
+
+# Calculates the area by using the property of Shapely's Polygon object
+def calculateArea(coordsList):
+
+    x = []
+    y = []
+    for coords in coordsList:
+        x.append(coords[0])
+        y.append(coords[1])
+    
+    pgon = pg(zip(x, y))
+    
+    return pgon.area * 100 #fiecare pixel are 10 X 10 m2?
+    #return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1))) * 100
 
 
 # Testing function for visualising the polygons.

@@ -1,31 +1,15 @@
-from Repository.JsonFunctions import createJson
-from numpy.lib.polynomial import poly
-from Polygon import Polygon
-from Repository.JsonLDFunctions import createJsonLD
-import requests
-# import PyLd
-from PIL import Image
 import io
+import requests
+from numpy.lib.polynomial import poly
+from PIL import Image
+from Polygon import Polygon
 from Properties.Properties import *
 from Repository.Conversions import *
 from Repository.ImageEditing import *
 from Repository.PolygonPoints import *
-from shapely.geometry import Polygon as pg
 from Repository.ImageSize import *
-
-# Calculates the area by using the property of Shapely's Polygon object
-def calculateArea(coordsList):
-
-    x = []
-    y = []
-    for coords in coordsList:
-        x.append(coords[0])
-        y.append(coords[1])
-    
-    pgon = pg(zip(x, y))
-    
-    return pgon.area * 100 #fiecare pixel are 10 X 10 m2?
-    #return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1))) * 100
+from Repository.JsonLDFunctions import createJsonLD
+from Repository.JsonFunctions import createJson
 
 
 def requestImage(imageDate, bbox, height, width):
@@ -35,6 +19,7 @@ def requestImage(imageDate, bbox, height, width):
     # if response.status_code == 200:
     #   return response.content
     return response.content
+
 
 # Processing the data and croping the image.
 def dataProcessing(polygonCoordinates, dateImage, height, width):
@@ -48,6 +33,8 @@ def dataProcessing(polygonCoordinates, dateImage, height, width):
     cropImage(imageLocation, pixels)
     return coordinatesBBOX
 
+
+# Returns a list of Polygon objects.
 def getPolygons(color, coordinatesBBOX, height, width):
     path = "Imagini/" + color + ".png"
     image = loadImage(path)
@@ -75,21 +62,22 @@ def getPolygons(color, coordinatesBBOX, height, width):
 
     return polygonList
 
+
 # Segments the image on 3 colors.
 def createColorMasks():
     for i in colors:
         colorMask(croppedImageBlackBackground, i)
 
 
-
-
-
 def main():
     # np.set_printoptions(threshold=sys.maxsize)
     # data set (should come from REST later on)
+    print("start main")
     width = getWidth(getOxDistance(polygonCoordinates))
     height = getHeight(getOyDistance(polygonCoordinates))
     dataProcessing(polygonCoordinates, date, height, width)
+    print("data processed")
+
     createColorMasks()
     outputJsonLd = open("JsonOutputs/PSDClassification.jsonld", 'w')
     outputJson = open("JsonOutputs/PSDClassification.json", 'w')
@@ -98,12 +86,16 @@ def main():
     for i in colors:
         polygonList += getPolygons(i, coordinatesBBOX, height, width)
     
+    print("polygons extracted")
+
     jsonLD = createJsonLD(polygonList)
     outputJsonLd.write(jsonLD)
+    print("json-ld output done")
 
     json = createJson(polygonList)
     outputJson.write(json)
-    
+    print("json output done")
+
     print("done")
 
 
