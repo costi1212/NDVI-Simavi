@@ -22,8 +22,8 @@ def requestImage(imageDate, bbox, height, width):
 
 
 # Processing the data and croping the image.
-def dataProcessing(polygonCoordinates, dateImage, height, width):
-    coordinatesBBOX = getBBOXFromParcelCoordinates(polygonCoordinates)
+def dataProcessing(coordinatesBBOX, polygonCoordinates, dateImage, height, width):
+
     pixels = mapPolygonPointsOnImage(coordinatesBBOX, polygonCoordinates, height, width)
     coordinatesBBOX = verifyOrderOfBboxCoordinates(coordinatesBBOX)
     responseGet = requestImage(dateImage, listToString(coordinatesBBOX), height, width)
@@ -31,7 +31,7 @@ def dataProcessing(polygonCoordinates, dateImage, height, width):
     image = Image.open(io.BytesIO(bytes))
     image.save(imageLocation)
     cropImage(imageLocation, pixels)
-    return coordinatesBBOX
+    #return coordinatesBBOX
 
 
 # Returns a list of Polygon objects.
@@ -73,9 +73,10 @@ def main():
     # np.set_printoptions(threshold=sys.maxsize)
     # data set (should come from REST later on)
     print("start main")
-    width = getWidth(getOxDistance(polygonCoordinates))
-    height = getHeight(getOyDistance(polygonCoordinates))
-    dataProcessing(polygonCoordinates, date, height, width)
+    coordinatesBBOX = getBBOXFromParcelCoordinates(polygonCoordinates)
+    width = getWidth(getOxDistance(coordinatesBBOX))
+    height = getHeight(getOyDistance(coordinatesBBOX))
+    dataProcessing(coordinatesBBOX,polygonCoordinates, date, height, width)
     print("data processed")
 
     createColorMasks()
