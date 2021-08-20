@@ -50,7 +50,7 @@ def extractPolygonCorners(imagePath, color):
     
     # thres poate fi modificat pt a gasi mai multe colturi
     thres = 0.1 * dst.max()
-    print(thres)
+    
     _, dst = cv2.threshold(dst, thres, 255, 0)
     
     img[dst > thres] = [0, 0, 255]

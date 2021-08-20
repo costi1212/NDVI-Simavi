@@ -45,6 +45,9 @@ def getPolygons(color, coordinatesBBOX, height, width):
 
     # Optional step for visualising the results
     drawPolygonsAndContours(polygonCoords, contours, image)
+
+    width = getWidth(getOxDistance(coordinatesBBOX))
+    div = WIDTH / width
     
     # Dictionary used to convert color names to the coresponding codes.
     colorCode = {"brown": 0, "yellow": 1, "green": 2}
@@ -55,8 +58,11 @@ def getPolygons(color, coordinatesBBOX, height, width):
         if len(poly) < 3:
             continue
 
-        coords = pixelsIndicesToCoordinates(poly, height, width, coordinatesBBOX)
+        #coords = pixelsIndicesToCoordinates(poly, height, width, coordinatesBBOX)
+        coords = pixelsIndicesToCoordinates(poly, HEIGHT, WIDTH, coordinatesBBOX)
+
         area = calculateArea(poly)
+        area /= div
         p = Polygon(coords, colorCode[color.lower()], area)
         polygonList.append(p)
 
@@ -74,10 +80,10 @@ def main():
     # data set (should come from REST later on)
     print("start main")
     coordinatesBBOX = getBBOXFromParcelCoordinates(polygonCoordinates)
-    width = getWidth(getOxDistance(coordinatesBBOX))
-    height = getHeight(getOyDistance(coordinatesBBOX))
-    dataProcessing(coordinatesBBOX,polygonCoordinates, date, height, width)
-    #dataProcessing(coordinatesBBOX,polygonCoordinates, date, HEIGHT, WIDTH)
+    #width = getWidth(getOxDistance(coordinatesBBOX))
+    #height = getHeight(getOyDistance(coordinatesBBOX))
+    #dataProcessing(coordinatesBBOX,polygonCoordinates, date, height, width)
+    dataProcessing(coordinatesBBOX,polygonCoordinates, date, HEIGHT, WIDTH)
     print("data processed")
 
     createColorMasks()
@@ -86,8 +92,8 @@ def main():
     polygonList = []
 
     for i in colors:
-        polygonList += getPolygons(i, coordinatesBBOX, height, width)
-        #polygonList += getPolygons(i, coordinatesBBOX, HEIGHT, WIDTH)
+        #polygonList += getPolygons(i, coordinatesBBOX, height, width)
+        polygonList += getPolygons(i, coordinatesBBOX, HEIGHT, WIDTH)
 
     print("polygons extracted")
 
