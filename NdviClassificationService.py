@@ -85,11 +85,8 @@ def viezureHome():
 def getNDVIClassificationAsJson():
     args = request.json
     coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
-    print(coordinatesBBOX)
     width = getWidth(getOxDistance(coordinatesBBOX))
-    print(width)
     height = getHeight(getOyDistance(coordinatesBBOX))
-    print(height)
     dataProcessing(coordinatesBBOX, args['polygonCoordinates'], args['date'], height, width)
     createColorMasks()
     polygonList = []
@@ -102,15 +99,16 @@ def getNDVIClassificationAsJson():
 @app.route('/api/jsonld/v1/ndvi-classification', methods=['POST'])
 def getNDVIClassificationAsJsonLD():
     args = request.json
-    width = getWidth(getOxDistance(stringToFloatList(args['polygonCoordinates'])))
-    height = getHeight(getOyDistance(stringToFloatList(args['polygonCoordinates'])))
-    BBOXcoordinates = dataProcessing(args['polygonCoordinates'], args['date'], height, width)
+    coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
+    width = getWidth(getOxDistance(coordinatesBBOX))
+    height = getHeight(getOyDistance(coordinatesBBOX))
+    dataProcessing(coordinatesBBOX, args['polygonCoordinates'], args['date'], height, width)
     createColorMasks()
     polygonList = []
     for i in colors:
-        polygonList += getPolygons(i, BBOXcoordinates, height, width)
-    jsonLD = createJsonLD(polygonList)
-    return jsonLD
+        polygonList += getPolygons(i, coordinatesBBOX, height, width)
+    jsonld = createJsonLD(polygonList)
+    return jsonld
 
 
 app.run()
