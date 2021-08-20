@@ -47,10 +47,14 @@ def extractPolygonCorners(imagePath, color):
         hsv = cv2.inRange(hsv, (13, 25, 25), (22, 255, 255))
 
     dst = cv2.cornerHarris(hsv, 5, 3, 0.04)
-    _, dst = cv2.threshold(dst, 0.1 * dst.max(), 255, 0)
-
-    img[dst > 0.1 * dst.max()] = [0, 0, 255]
-
+    
+    # thres poate fi modificat pt a gasi mai multe colturi
+    thres = 0.1 * dst.max()
+    print(thres)
+    _, dst = cv2.threshold(dst, thres, 255, 0)
+    
+    img[dst > thres] = [0, 0, 255]
+    
     corners = []
     for i in range(len(img)):
         for j in range(len(img[0])):
