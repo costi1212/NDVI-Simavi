@@ -1,3 +1,4 @@
+from Properties.Properties import PIXEL_SIZE
 import random
 import cv2
 import numpy as np
@@ -46,10 +47,14 @@ def extractPolygonCorners(imagePath, color):
         hsv = cv2.inRange(hsv, (13, 25, 25), (22, 255, 255))
 
     dst = cv2.cornerHarris(hsv, 5, 3, 0.04)
-    _, dst = cv2.threshold(dst, 0.1 * dst.max(), 255, 0)
-
-    img[dst > 0.1 * dst.max()] = [0, 0, 255]
-
+    
+    # thres poate fi modificat pt a gasi mai multe colturi
+    thres = 0.1 * dst.max()
+    
+    _, dst = cv2.threshold(dst, thres, 255, 0)
+    
+    img[dst > thres] = [0, 0, 255]
+    
     corners = []
     for i in range(len(img)):
         for j in range(len(img[0])):
@@ -72,8 +77,7 @@ def calculateArea(coordsList):
     
     pgon = pg(zip(x, y))
     
-    return pgon.area * 100 #fiecare pixel are 10 X 10 m2?
-    #return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1))) * 100
+    return pgon.area * PIXEL_SIZE
 
 
 # Testing function for visualising the polygons.
