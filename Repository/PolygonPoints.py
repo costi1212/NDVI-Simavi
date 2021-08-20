@@ -1,3 +1,4 @@
+from Properties.Properties import PIXEL_SIZE
 import random
 import cv2
 import numpy as np
@@ -72,8 +73,7 @@ def calculateArea(coordsList):
     
     pgon = pg(zip(x, y))
     
-    return pgon.area * 100 #fiecare pixel are 10 X 10 m2?
-    #return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1))) * 100
+    return pgon.area * PIXEL_SIZE
 
 
 # Testing function for visualising the polygons.
