@@ -16,7 +16,7 @@ from Repository.JsonFunctions import *
 from Repository.JsonLDFunctions import *
 from Repository.PolygonPoints import *
 from Repository.Conversions import mapPolygonPointsOnImage, verifyOrderOfBboxCoordinates
-
+from Repository.ImageDate import *
 
 def requestImage(imageDate, bbox, height, width):
     urlRequest = url + defaultArguments + f'&time={imageDate}' + f'&bbox={bbox}'+f'&height={height}'+f'&width={width}'
@@ -87,7 +87,8 @@ def getNDVIClassificationAsJson():
     coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
     width = getWidth(getOxDistance(coordinatesBBOX))
     height = getHeight(getOyDistance(coordinatesBBOX))
-    dataProcessing(coordinatesBBOX, args['polygonCoordinates'], args['date'], height, width)
+    optimalImage = getOptimalDate(args['polygonCoordinates'])
+    dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
     createColorMasks()
     polygonList = []
     for i in colors:
@@ -102,7 +103,8 @@ def getNDVIClassificationAsJsonLD():
     coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
     width = getWidth(getOxDistance(coordinatesBBOX))
     height = getHeight(getOyDistance(coordinatesBBOX))
-    dataProcessing(coordinatesBBOX, args['polygonCoordinates'], args['date'], height, width)
+    optimalImage = getOptimalDate(args['polygonCoordinates'])
+    dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
     createColorMasks()
     polygonList = []
     for i in colors:
