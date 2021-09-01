@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from shapely.geometry import Polygon as pg
 
+
 # Loads image from given path.
 def loadImage(imagePath):
     image = cv2.imread(imagePath)

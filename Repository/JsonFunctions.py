@@ -37,19 +37,11 @@ def createStatisticsList():
 
     statistics = []
 
-    # Good version:
-    '''
-    for i in range(len(colorList)):
-        stats = {}
-        stats["classnr"] = i
-        stats["hex"] = colorList[i]
-        statistics.append(stats)
-    '''
-
-    # Hardcoded version:
+    # This version of the program is hardcoded for 3 colors.
     statsBrown = {"classnr":0, "hex":"#8A7010"}
     statsYellow = {"classnr":1, "hex":"#8A6210"}
     statsGreen = {"classnr":2, "hex":"#768A10"}
+    
     statistics.append(statsBrown)
     statistics.append(statsYellow)
     statistics.append(statsGreen)

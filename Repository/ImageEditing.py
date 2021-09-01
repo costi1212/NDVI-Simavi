@@ -7,7 +7,6 @@ def cropImage(imagePath, pixelIndicesArray):
     img = cv2.imread(imagePath)
     pixelIndicesArray = roundFloatList(pixelIndicesArray)
     pts = np.array(pixelIndicesArray)
-    # print(pts)
 
     # (1) Crop the polygon
     polygon = cv2.boundingRect(pts)

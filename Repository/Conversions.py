@@ -2,6 +2,8 @@ import math
 from pyproj import Transformer
 
 
+# Takes the position of two points in latitutde  and logitude and returns
+# the distance in meters between them.
 def getDistanceFromLatLonInM(lat1, lon1, lat2, lon2):
     R = 6371
     dLat = deg2rad(lat2 - lat1)
@@ -16,7 +18,6 @@ def getDistanceFromLatLonInM(lat1, lon1, lat2, lon2):
 
 def deg2rad(deg):
     return deg * (math.pi / 180)
-
 
 
 def roundFloatList(floatList):
@@ -149,6 +150,7 @@ def mapPolygonPointsOnImage(bbox, polygonCoordinates, heigth, width):
         pair = [pixelposx, pixelposy]
         pixelPositions.append(pair)
     return pixelPositions
+
 
 def pixelsIndicesToCoordinates(pixelIndices, heigth, width, bbox):
     bbox = epsg3857ToEpsg4326(bbox)
