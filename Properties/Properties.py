@@ -6,6 +6,7 @@ urlPixels = 'https://services.terrascope.be/timeseries/v1.0/ts/TERRASCOPE_S2_NDV
 defaultArguments = '?service=WMS&version=1.3.0&request=GetMap&layers=CGS_S2_NDVI&format=image/png&srs=EPSG:3857'
 jsonOutputs = 'JsonOutputs/JsonOutputs.json'
 croppedImageBlackBackground = 'Imagini/dst.png'
+croppedImageBlackBackgroundName = 'dst'
 colors = ['green', 'yellow', 'brown']
 imageLocation = 'Imagini/Imagine.png'
 date = '2021-05-15'

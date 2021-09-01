@@ -75,9 +75,10 @@ def verifyOrderOfBboxCoordinates(bbox):
     return bbox
 
 
+#Metoda care transforma coordonatele din sistemul latitudine-longitudine epsg3857 in epsg4326
+#coordinatesList - lista de coordoante ce trebuie transformate (exemplu:'27.199243,45.910026,27.209468,45.911885,27.209607,45.906525,27.200563,45.904793')
 def epsg3857ToEpsg4326(coordinatesList):
     newCoordinatesList = []
-    # transformer = Transformer.from_crs("epsg:3857", "epsg:4326")
     transformer = Transformer.from_crs("epsg:3857", "epsg:4326", always_xy=True)
     for i in range(0, len(coordinatesList), 2):
         x = coordinatesList[i]
@@ -89,9 +90,10 @@ def epsg3857ToEpsg4326(coordinatesList):
     return newCoordinatesList
 
 
+#Metoda care transforma coordonatele din sistemul latitudine-longitudine epsg4326 in epsg3857
+#coordinatesList - lista de coordoante ce trebuie transformate (exemplu:'27.199243,45.910026,27.209468,45.911885,27.209607,45.906525,27.200563,45.904793')
 def epsg4326ToEpsg3857(coordinatesList):
     newCoordinatesList = []
-    # transformer = Transformer.from_crs("epsg:3857", "epsg:4326")
     transformer = Transformer.from_crs("epsg:4326", "epsg:3857", always_xy=True)
     for i in range(0, len(coordinatesList), 2):
         x = coordinatesList[i]

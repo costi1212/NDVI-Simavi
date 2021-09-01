@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify
 from PIL import Image
 import io
-from flask_restful import Resource, Api, reqparse
 import requests
-import pandas as pd
 import ast
 
 from Main import calculateArea
