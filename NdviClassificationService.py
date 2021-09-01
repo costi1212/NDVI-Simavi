@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_restful import Resource, Api, fields, marshal_with
 from PIL import Image
 import io
 import requests
 import ast
+import json
 
 from Main import calculateArea
 from Polygon import Polygon
@@ -15,9 +17,14 @@ from Repository.JsonLDFunctions import *
 from Repository.PolygonPoints import *
 from Repository.Conversions import mapPolygonPointsOnImage, verifyOrderOfBboxCoordinates
 from Repository.ImageDate import *
+from Repository.ColorCoverage import *
+from flask_apispec import marshal_with
+from flask_apispec.views import MethodResource
+from marshmallow import Schema, fields
+
 
 def requestImage(imageDate, bbox, height, width):
-    urlRequest = url + defaultArguments + f'&time={imageDate}' + f'&bbox={bbox}'+f'&height={height}'+f'&width={width}'
+    urlRequest = url + defaultArguments + f'&time={imageDate}' + f'&bbox={bbox}' + f'&height={height}' + f'&width={width}'
     response = requests.get(urlRequest)
     # poate sa adaugam un
     # if response.status_code == 200:
@@ -34,7 +41,6 @@ def dataProcessing(coordinatesBBOX, polygonCoordinates, dateImage, height, width
     image = Image.open(io.BytesIO(bytes))
     image.save(imageLocation)
     cropImage(imageLocation, pixels)
-
 
 
 def createColorMasks():
@@ -71,8 +77,52 @@ def getPolygons(color, coordinatesBBOX, height, width):
 
 
 app = Flask('NDVIClassification')
+api = Api(app)
 app.config["DEBUG"] = True
 
+
+class JsonApi(Resource):
+    def post(self):
+        args = request.json
+        coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
+        width = getWidth(getOxDistance(coordinatesBBOX))
+        height = getHeight(getOyDistance(coordinatesBBOX))
+        optimalImage = getOptimalDate(args['polygonCoordinates'])
+        dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
+        createColorMasks()
+        polygonList = []
+        for i in colors:
+            polygonList += getPolygons(i, coordinatesBBOX, height, width)
+        imagesForDict = colors[:]
+        imagesForDict.append(croppedImageBlackBackgroundName)
+        coveragesDict = getCoveragesDict(imagesForDict)
+        jsonOut = createJson(polygonList, coveragesDict)
+        return json.loads(jsonOut)
+
+
+class JsonldApi(Resource):
+    def post(self):
+        args = request.json
+        coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
+        width = getWidth(getOxDistance(coordinatesBBOX))
+        height = getHeight(getOyDistance(coordinatesBBOX))
+        optimalImage = getOptimalDate(args['polygonCoordinates'])
+        dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
+        print(colors)
+        createColorMasks()
+        polygonList = []
+        for i in colors:
+            polygonList += getPolygons(i, coordinatesBBOX, height, width)
+        imagesForDict = colors[:]
+        imagesForDict.append(croppedImageBlackBackgroundName)
+        coveragesDict = getCoveragesDict(imagesForDict)
+        jsonld = createJsonLD(polygonList, coveragesDict)
+        return json.loads(jsonld)
+
+
+api.add_resource(JsonApi, '/api/json/v1/ndvi-classification')
+api.add_resource(JsonldApi, '/api/jsonld/v1/ndvi-classification')
+'''
 
 @app.route('/')
 def viezureHome():
@@ -91,7 +141,10 @@ def getNDVIClassificationAsJson():
     polygonList = []
     for i in colors:
         polygonList += getPolygons(i, coordinatesBBOX, height, width)
-    json = createJson(polygonList)
+    imagesForDict = colors[:]
+    imagesForDict.append(croppedImageBlackBackgroundName)
+    coveragesDict = getCoveragesDict(imagesForDict)
+    json = createJson(polygonList, coveragesDict)
     return json
 
 
@@ -103,12 +156,16 @@ def getNDVIClassificationAsJsonLD():
     height = getHeight(getOyDistance(coordinatesBBOX))
     optimalImage = getOptimalDate(args['polygonCoordinates'])
     dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
+    print(colors)
     createColorMasks()
     polygonList = []
     for i in colors:
         polygonList += getPolygons(i, coordinatesBBOX, height, width)
-    jsonld = createJsonLD(polygonList)
+    imagesForDict = colors[:]
+    imagesForDict.append(croppedImageBlackBackgroundName)
+    coveragesDict = getCoveragesDict(imagesForDict)
+    jsonld = createJsonLD(polygonList, coveragesDict)
     return jsonld
-
+'''
 
 app.run()

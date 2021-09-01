@@ -1,7 +1,8 @@
 import json
 import uuid
+from Repository.JsonFunctions import *
 
-def createJsonLD(polygonList):
+def createJsonLD(polygonList, coveragesDict):
 
     mainJsonLD = {}
 
@@ -12,10 +13,10 @@ def createJsonLD(polygonList):
         mgmtZoneJson["hasGeometry"] = geomJson["@id"]
         graph.append(mgmtZoneJson)
         graph.append(geomJson)
-    
+    statistics = createStatisticsList(coveragesDict)
     mainJsonLD["graph"] = graph
     mainJsonLD["@context"] = "https://w3id.org/demeter/agri-context.jsonld"
-
+    mainJsonLD["statistics"] = statistics
     return json.dumps(mainJsonLD)
 
 

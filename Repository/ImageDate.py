@@ -32,7 +32,6 @@ def getOptimalDate(polygonCoordinatesString):
     max = 0
     maxDate = 0
     polygonCoordinatesString = polygonCoordinatesString.replace(" ","")
-    print(polygonCoordinatesString)
     while ok == 0:
         responseJson = postPixelCountService(polygonCoordinatesString, days)
         maxDate = responseJson['results'][0]['date']
@@ -52,7 +51,7 @@ def getOptimalDate(polygonCoordinatesString):
     outputStringList.append(max)
     return outputStringList
 
-print(getOptimalDate(polygonCoordinatesString))
+
 
 
 
