@@ -1,3 +1,5 @@
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api, fields, marshal_with
 from PIL import Image
@@ -21,6 +23,7 @@ from Repository.ColorCoverage import *
 from flask_apispec import marshal_with
 from flask_apispec.views import MethodResource
 from marshmallow import Schema, fields
+from flask_apispec.extension import FlaskApiSpec
 
 
 def requestImage(imageDate, bbox, height, width):
@@ -80,8 +83,22 @@ app = Flask('NDVIClassification')
 api = Api(app)
 app.config["DEBUG"] = True
 
+app.config.update({
+    'APISPEC_SPEC': APISpec(
+        title='NDVI Classification Service',
+        version='v1',
+        plugins=[MarshmallowPlugin()],
+        openapi_version='2.0.0'
+    ),
+    'APISPEC_SWAGGER_URL': '/swagger/',  # URI to access API Doc JSON
+    'APISPEC_SWAGGER_UI_URL': '/swagger-ui/'  # URI to access UI of API Doc
+})
 
-class JsonApi(Resource):
+class APIResponseSchema(Schema):
+    ceva = fields.Str(default='Success')
+
+class JsonApi(MethodResource, Resource):
+    @marshal_with(APIResponseSchema)
     def post(self):
         args = request.json
         coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
@@ -97,7 +114,7 @@ class JsonApi(Resource):
         imagesForDict.append(croppedImageBlackBackgroundName)
         coveragesDict = getCoveragesDict(imagesForDict)
         jsonOut = createJson(polygonList, coveragesDict)
-        return json.loads(jsonOut)
+        return jsonOut
 
 
 class JsonldApi(Resource):
@@ -117,11 +134,14 @@ class JsonldApi(Resource):
         imagesForDict.append(croppedImageBlackBackgroundName)
         coveragesDict = getCoveragesDict(imagesForDict)
         jsonld = createJsonLD(polygonList, coveragesDict)
-        return json.loads(jsonld)
+        return jsonld
 
 
 api.add_resource(JsonApi, '/api/json/v1/ndvi-classification')
 api.add_resource(JsonldApi, '/api/jsonld/v1/ndvi-classification')
+docs = FlaskApiSpec(app)
+docs.register(JsonApi)
+#docs.register(JsonldApi)
 '''
 
 @app.route('/')

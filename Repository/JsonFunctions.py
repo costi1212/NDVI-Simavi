@@ -1,12 +1,14 @@
 import json
 
+from flask import jsonify
+
 
 def createJson(polygonList, coveragesDict):
     mainJson = {}
     mainJson["statistics"] = createStatisticsList(coveragesDict)
     mainJson["map"] = createMapJson(polygonList)
 
-    return json.dumps(mainJson)
+    return jsonify(mainJson)
 
 
 def createMapJson(polygonList):
@@ -35,9 +37,9 @@ def createStatisticsList(coveragesDict):
     statistics = []
 
     # This version of the program is hardcoded for 3 colors.
-    statsBrown = {"classnr": 0, "hex": "#8A7010", "coverage": coveragesDict["brown"]}
-    statsYellow = {"classnr": 1, "hex": "#8A6210", "coverage": coveragesDict["yellow"]}
-    statsGreen = {"classnr": 2, "hex": "#768A10", "coverage": coveragesDict["green"]}
+    statsBrown = {"code": 0, "colorHex": "#8A7010", "coverage": coveragesDict["brown"]}
+    statsYellow = {"code": 1, "colorHex": "#8A6210", "coverage": coveragesDict["yellow"]}
+    statsGreen = {"code": 2, "colorHex": "#768A10", "coverage": coveragesDict["green"]}
 
     statistics.append(statsBrown)
     statistics.append(statsYellow)

@@ -1,5 +1,8 @@
 import json
 import uuid
+
+from flask import jsonify
+
 from Repository.JsonFunctions import *
 
 def createJsonLD(polygonList, coveragesDict):
@@ -17,7 +20,7 @@ def createJsonLD(polygonList, coveragesDict):
     mainJsonLD["graph"] = graph
     mainJsonLD["@context"] = "https://w3id.org/demeter/agri-context.jsonld"
     mainJsonLD["statistics"] = statistics
-    return json.dumps(mainJsonLD)
+    return jsonify(mainJsonLD)
 
 
 # Creates a python dictionary with the common fields of all
