@@ -13,10 +13,10 @@ The project is meant to be a component of a dashboard that helps farmers visuall
 <br />
 Algorithm pipeline:
 
-1. Image Retreival
+1. Image Retrieval
 - The application is built with Flask, so the coordinates of the parcel are received in the body of the request.
-- The satellite image is retreived from the open-source [Terrascope](https://terrascope.be/en) service.
-- The chosen image is the most recent one with a clarity > 50% (Less than 50% of the image is covered by clouds).
+- The satellite image is retrieved from the open-source [Terrascope](https://terrascope.be/en) service.
+- The chosen image is the clearest picture taken by the satellite recently with a clarity > 50% (Less than 50% of the image is covered by clouds).
 <p align="center">
   <a>
     <img src="Imagini/Imagine.png" alt="Initial image" width="200" height="200">
@@ -25,14 +25,14 @@ Algorithm pipeline:
 
 
 2. Image Processing
-- The image is cropped and rescaled, such that only the relevant parcel is visible.
+- The image is cropped and rescaled, such that only the relevant parcel is visible, not the whole bounding box.
 <p align="center">
   <a>
     <img src="Imagini/dst.png" alt="Cropped image" width="200" height="200">
   </a>
 </p>
 
-- The parcel image is split into 3 images, according to the 3 colors that differentiate the sub-polygons.
+- The parcel image is split into 3 images, according to the 3 NDVI colors that differentiate the sub-polygons.
 
 <p align="center">
   <a>
