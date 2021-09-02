@@ -34,7 +34,7 @@ def createManagementZoneJsonLD(polygon):
     
     mgmtZoneJson = createSimpleDictionary("urn:demeter:MgmtZone:", "ManagementZone")
     mgmtZoneJson["code"] = polygon.code
-    mgmtZoneJson["area"] = polygon.area
+
 
     return mgmtZoneJson
 

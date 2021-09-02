@@ -26,7 +26,7 @@ def createMapJson(polygonList):
 
 def createFeatureJson(id, polygon):
     featureJson = {"id": id, "type": "Feature"}
-    featureJson["properties"] = {"area": polygon.area, "classnr": polygon.code}
+    featureJson["properties"] = {"classnr": polygon.code}
     featureJson["geometry"] = {"type": "Polygon", "coordinates": polygon.coords}
 
     return featureJson

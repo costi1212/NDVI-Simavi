@@ -72,8 +72,7 @@ def getPolygons(color, coordinatesBBOX, height, width):
             continue
 
         coords = pixelsIndicesToCoordinates(poly, height, width, coordinatesBBOX)
-        area = calculateArea(poly)
-        p = Polygon(coords, colorCode[color.lower()], area)
+        p = Polygon(coords, colorCode[color.lower()])
         polygonList.append(p)
 
     return polygonList
