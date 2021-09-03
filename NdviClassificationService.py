@@ -1,7 +1,9 @@
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import Flask, request, jsonify
-from flask_restful import Resource, Api, fields, marshal_with
+from flask_restx import Api, Resource, fields, schemas
+# from werkzeug.utils import  cached_property
+from flask_restful_swagger import swagger
 from PIL import Image
 import io
 import requests
@@ -20,9 +22,9 @@ from Repository.PolygonPoints import *
 from Repository.Conversions import mapPolygonPointsOnImage, verifyOrderOfBboxCoordinates
 from Repository.ImageDate import *
 from Repository.ColorCoverage import *
-from flask_apispec import marshal_with
+from flask_apispec import marshal_with, doc, use_kwargs
 from flask_apispec.views import MethodResource
-from marshmallow import Schema, fields
+
 from flask_apispec.extension import FlaskApiSpec
 
 
@@ -78,7 +80,72 @@ def getPolygons(color, coordinatesBBOX, height, width):
     return polygonList
 
 
-app = Flask('NDVIClassification')
+flask_app = Flask('NDVIClassification')
+app = Api(app=flask_app,
+          version='1.0',
+          title='NDVI classification',
+          description='Classify Images by the NDVI index')
+
+name_space = app.namespace('NDVI', description='NDVI-specific API s')
+model = app.model('Input_Json_Model',
+                  {
+                      'polygonCoordinates': fields.String(
+                          required=True,
+                          description='Coordinates of the polygon to be analysed.',
+                          help='Coordinates cannot be left unspecified.',
+                          example=polygonCoordinatesString
+                      )
+                  })
+
+
+@name_space.route("/api/json/v1/ndvi-classification")
+class JsonApi(Resource):
+    @app.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
+    @app.expect(model)
+    #@app.marshal_with(model)
+    def post(self):
+        args = request.json
+        print(args)
+        coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
+        width = getWidth(getOxDistance(coordinatesBBOX))
+        height = getHeight(getOyDistance(coordinatesBBOX))
+        optimalImage = getOptimalDate(args['polygonCoordinates'])
+        dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
+        createColorMasks()
+        polygonList = []
+        for i in colors:
+            polygonList += getPolygons(i, coordinatesBBOX, height, width)
+        imagesForDict = colors[:]
+        imagesForDict.append(croppedImageBlackBackgroundName)
+        coveragesDict = getCoveragesDict(imagesForDict)
+        jsonOut = createJson(polygonList, coveragesDict)
+        return jsonOut
+
+
+@name_space.route("/api/jsonld/v1/ndvi-classification")
+class JsonldApi(Resource):
+    @app.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
+    @app.expect(model)
+    def post(self):
+        args = request.json
+        coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
+        width = getWidth(getOxDistance(coordinatesBBOX))
+        height = getHeight(getOyDistance(coordinatesBBOX))
+        optimalImage = getOptimalDate(args['polygonCoordinates'])
+        dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
+        print(colors)
+        createColorMasks()
+        polygonList = []
+        for i in colors:
+            polygonList += getPolygons(i, coordinatesBBOX, height, width)
+        imagesForDict = colors[:]
+        imagesForDict.append(croppedImageBlackBackgroundName)
+        coveragesDict = getCoveragesDict(imagesForDict)
+        jsonld = createJsonLD(polygonList, coveragesDict)
+        return jsonld
+
+flask_app.run()
+'''
 api = Api(app)
 app.config["DEBUG"] = True
 
@@ -93,13 +160,58 @@ app.config.update({
     'APISPEC_SWAGGER_UI_URL': '/swagger-ui/'  # URI to access UI of API Doc
 })
 
-class APIResponseSchema(Schema):
-    ceva = fields.Str(default='Success')
 
-class JsonApi(MethodResource, Resource):
-    @marshal_with(APIResponseSchema)
+f1 = open(jsonExamplePath)
+data = json.load(f1)
+f2 = open(jsonldExamplePath)
+
+
+@swagger.model
+class JsonIntrare:
+    polygonCoordinates = polygonCoordinatesString
+
+    def __init__(self, polygonCoordinates):
+        self.polygonCoordinates = polygonCoordinatesString
+
+        pass
+
+
+@swagger.model
+class JsonIesire:
+    def __init__(self, map, statistics):
+        self.map = map
+        self.statistics = statistics
+
+    pass
+
+
+class JsonApi(Resource):
+    @swagger.operation(
+        notes='return a json',
+        nickname='get Json',
+        responseClass=JsonIesire.__name__,
+        parameters=[
+            {
+                "name": "body",
+                "description": "json ce contine coordonatele poligonului la cheia polygonCoordinates",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": JsonIntrare.__name__,
+                "in": "body",
+                "default": "all",
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 405,
+                "message": "Invalid input"
+            }
+        ]
+    )
+    @marshal_with(JsonIntrare)
     def post(self):
         args = request.json
+        print(args)
         coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
         width = getWidth(getOxDistance(coordinatesBBOX))
         height = getHeight(getOyDistance(coordinatesBBOX))
@@ -117,6 +229,27 @@ class JsonApi(MethodResource, Resource):
 
 
 class JsonldApi(Resource):
+    @swagger.operation(
+        notes='return a json',
+        responseClass=JsonIesire.__name__,
+        parameters=[
+            {
+                "name": "body",
+                "description": "json ce contine coordonatele poligonului la cheia polygonCoordinates",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": JsonIntrare.__name__,
+                "paramType": "body"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 405,
+                "message": "Invalid input"
+            }
+        ]
+    )
+    @marshal_with(JsonIesire)
     def post(self):
         args = request.json
         coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
@@ -138,10 +271,7 @@ class JsonldApi(Resource):
 
 api.add_resource(JsonApi, '/api/json/v1/ndvi-classification')
 api.add_resource(JsonldApi, '/api/jsonld/v1/ndvi-classification')
-docs = FlaskApiSpec(app)
-docs.register(JsonApi)
-#docs.register(JsonldApi)
-'''
+
 
 @app.route('/')
 def viezureHome():
@@ -186,5 +316,3 @@ def getNDVIClassificationAsJsonLD():
     jsonld = createJsonLD(polygonList, coveragesDict)
     return jsonld
 '''
-
-app.run()
