@@ -16,7 +16,27 @@ def getCoveragesDict(imageNames):
         pixelsdict[key] /= pixelsdict[croppedImageBlackBackgroundName]
     return pixelsdict
 
+def getCoveredPixels(whiteBacgroundMask):
+    coveredPixels = 0
+    im = Image.open(f'Imagini/{whiteBacgroundMask}.png')
+    for pixel in im.getdata():
+        if pixel == (0, 0, 0):
+            coveredPixels += 1
+    return coveredPixels
 
+
+def getTotalPixels(whiteBacgroundMask):
+    totalPixels = 0
+    im = Image.open(f'Imagini/{whiteBacgroundMask}.png')
+    for pixel in im.getdata():
+        if pixel != (0, 0, 0):
+            totalPixels += 1
+    return totalPixels
+
+
+def createFinalDict(coveragesDict):
+    coveragesDict['covered'] = getCoveredPixels(croppedImageWhiteBackgroundName)/getTotalPixels(croppedImageWhiteBackgroundName)
+    return coveragesDict
 
 
 

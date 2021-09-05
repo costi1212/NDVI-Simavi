@@ -7,6 +7,7 @@ defaultArguments = '?service=WMS&version=1.3.0&request=GetMap&layers=CGS_S2_NDVI
 jsonOutputs = 'JsonOutputs/JsonOutputs.json'
 croppedImageBlackBackground = 'Imagini/dst.png'
 croppedImageBlackBackgroundName = 'dst'
+croppedImageWhiteBackgroundName = 'dst2'
 colors = ['green', 'yellow', 'brown']
 jsonExamplePath = 'Examples/JsonResponse.json'
 jsonldExamplePath = 'Examples/JsonldResponse.json'

@@ -30,6 +30,7 @@ from flask_apispec.extension import FlaskApiSpec
 
 def requestImage(imageDate, bbox, height, width):
     urlRequest = url + defaultArguments + f'&time={imageDate}' + f'&bbox={bbox}' + f'&height={height}' + f'&width={width}'
+    print(urlRequest)
     response = requests.get(urlRequest)
     # poate sa adaugam un
     # if response.status_code == 200:
@@ -102,7 +103,7 @@ model = app.model('Input_Json_Model',
 class JsonApi(Resource):
     @app.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
     @app.expect(model)
-    #@app.marshal_with(model)
+    # @app.marshal_with(model)
     def post(self):
         args = request.json
         print(args)
@@ -118,6 +119,7 @@ class JsonApi(Resource):
         imagesForDict = colors[:]
         imagesForDict.append(croppedImageBlackBackgroundName)
         coveragesDict = getCoveragesDict(imagesForDict)
+        coveragesDict = createFinalDict(coveragesDict)
         jsonOut = createJson(polygonList, coveragesDict)
         return jsonOut
 
@@ -141,178 +143,9 @@ class JsonldApi(Resource):
         imagesForDict = colors[:]
         imagesForDict.append(croppedImageBlackBackgroundName)
         coveragesDict = getCoveragesDict(imagesForDict)
+        coveragesDict = createFinalDict(coveragesDict)
         jsonld = createJsonLD(polygonList, coveragesDict)
         return jsonld
+
 
 flask_app.run()
-'''
-api = Api(app)
-app.config["DEBUG"] = True
-
-app.config.update({
-    'APISPEC_SPEC': APISpec(
-        title='NDVI Classification Service',
-        version='v1',
-        plugins=[MarshmallowPlugin()],
-        openapi_version='2.0.0'
-    ),
-    'APISPEC_SWAGGER_URL': '/swagger/',  # URI to access API Doc JSON
-    'APISPEC_SWAGGER_UI_URL': '/swagger-ui/'  # URI to access UI of API Doc
-})
-
-
-f1 = open(jsonExamplePath)
-data = json.load(f1)
-f2 = open(jsonldExamplePath)
-
-
-@swagger.model
-class JsonIntrare:
-    polygonCoordinates = polygonCoordinatesString
-
-    def __init__(self, polygonCoordinates):
-        self.polygonCoordinates = polygonCoordinatesString
-
-        pass
-
-
-@swagger.model
-class JsonIesire:
-    def __init__(self, map, statistics):
-        self.map = map
-        self.statistics = statistics
-
-    pass
-
-
-class JsonApi(Resource):
-    @swagger.operation(
-        notes='return a json',
-        nickname='get Json',
-        responseClass=JsonIesire.__name__,
-        parameters=[
-            {
-                "name": "body",
-                "description": "json ce contine coordonatele poligonului la cheia polygonCoordinates",
-                "required": True,
-                "allowMultiple": False,
-                "dataType": JsonIntrare.__name__,
-                "in": "body",
-                "default": "all",
-            }
-        ],
-        responseMessages=[
-            {
-                "code": 405,
-                "message": "Invalid input"
-            }
-        ]
-    )
-    @marshal_with(JsonIntrare)
-    def post(self):
-        args = request.json
-        print(args)
-        coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
-        width = getWidth(getOxDistance(coordinatesBBOX))
-        height = getHeight(getOyDistance(coordinatesBBOX))
-        optimalImage = getOptimalDate(args['polygonCoordinates'])
-        dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
-        createColorMasks()
-        polygonList = []
-        for i in colors:
-            polygonList += getPolygons(i, coordinatesBBOX, height, width)
-        imagesForDict = colors[:]
-        imagesForDict.append(croppedImageBlackBackgroundName)
-        coveragesDict = getCoveragesDict(imagesForDict)
-        jsonOut = createJson(polygonList, coveragesDict)
-        return jsonOut
-
-
-class JsonldApi(Resource):
-    @swagger.operation(
-        notes='return a json',
-        responseClass=JsonIesire.__name__,
-        parameters=[
-            {
-                "name": "body",
-                "description": "json ce contine coordonatele poligonului la cheia polygonCoordinates",
-                "required": True,
-                "allowMultiple": False,
-                "dataType": JsonIntrare.__name__,
-                "paramType": "body"
-            }
-        ],
-        responseMessages=[
-            {
-                "code": 405,
-                "message": "Invalid input"
-            }
-        ]
-    )
-    @marshal_with(JsonIesire)
-    def post(self):
-        args = request.json
-        coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
-        width = getWidth(getOxDistance(coordinatesBBOX))
-        height = getHeight(getOyDistance(coordinatesBBOX))
-        optimalImage = getOptimalDate(args['polygonCoordinates'])
-        dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
-        print(colors)
-        createColorMasks()
-        polygonList = []
-        for i in colors:
-            polygonList += getPolygons(i, coordinatesBBOX, height, width)
-        imagesForDict = colors[:]
-        imagesForDict.append(croppedImageBlackBackgroundName)
-        coveragesDict = getCoveragesDict(imagesForDict)
-        jsonld = createJsonLD(polygonList, coveragesDict)
-        return jsonld
-
-
-api.add_resource(JsonApi, '/api/json/v1/ndvi-classification')
-api.add_resource(JsonldApi, '/api/jsonld/v1/ndvi-classification')
-
-
-@app.route('/')
-def viezureHome():
-    return "<h1>Service Documention</h1><p>Information to be added later.</p>"
-
-
-@app.route('/api/json/v1/ndvi-classification', methods=['POST'])
-def getNDVIClassificationAsJson():
-    args = request.json
-    coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
-    width = getWidth(getOxDistance(coordinatesBBOX))
-    height = getHeight(getOyDistance(coordinatesBBOX))
-    optimalImage = getOptimalDate(args['polygonCoordinates'])
-    dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
-    createColorMasks()
-    polygonList = []
-    for i in colors:
-        polygonList += getPolygons(i, coordinatesBBOX, height, width)
-    imagesForDict = colors[:]
-    imagesForDict.append(croppedImageBlackBackgroundName)
-    coveragesDict = getCoveragesDict(imagesForDict)
-    json = createJson(polygonList, coveragesDict)
-    return json
-
-
-@app.route('/api/jsonld/v1/ndvi-classification', methods=['POST'])
-def getNDVIClassificationAsJsonLD():
-    args = request.json
-    coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
-    width = getWidth(getOxDistance(coordinatesBBOX))
-    height = getHeight(getOyDistance(coordinatesBBOX))
-    optimalImage = getOptimalDate(args['polygonCoordinates'])
-    dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
-    print(colors)
-    createColorMasks()
-    polygonList = []
-    for i in colors:
-        polygonList += getPolygons(i, coordinatesBBOX, height, width)
-    imagesForDict = colors[:]
-    imagesForDict.append(croppedImageBlackBackgroundName)
-    coveragesDict = getCoveragesDict(imagesForDict)
-    jsonld = createJsonLD(polygonList, coveragesDict)
-    return jsonld
-'''
