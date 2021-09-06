@@ -40,7 +40,7 @@ def createStatisticsList(coveragesDict):
     statsBrown = {"code": 0, "colorHex": "#8A7010", "coverage": coveragesDict["brown"]}
     statsYellow = {"code": 1, "colorHex": "#8A6210", "coverage": coveragesDict["yellow"]}
     statsGreen = {"code": 2, "colorHex": "#768A10", "coverage": coveragesDict["green"]}
-    statsCovered = {"code": 3, "colorHex": "to be set later", "coverage": coveragesDict["covered"]}
+    statsCovered = {"code": -1, "colorHex": "to be set later", "coverage": coveragesDict["covered"]}
 
     statistics.append(statsBrown)
     statistics.append(statsYellow)

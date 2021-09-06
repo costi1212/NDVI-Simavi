@@ -13,10 +13,15 @@ def createJsonLD(polygonList, coveragesDict):
         mgmtZoneJson["hasGeometry"] = geomJson["@id"]
         graph.append(mgmtZoneJson)
         graph.append(geomJson)
-    statistics = createStatisticsList(coveragesDict)
+    
+    coveragesDict.pop("dst")
+    for color in coveragesDict:
+        colorJson = createNdviClassification(color, coveragesDict)
+        graph.append(colorJson)
+
     mainJsonLD["graph"] = graph
     mainJsonLD["@context"] = "https://w3id.org/demeter/agri-context.jsonld"
-    mainJsonLD["statistics"] = statistics
+    
     return jsonify(mainJsonLD)
 
 
@@ -31,7 +36,6 @@ def createManagementZoneJsonLD(polygon):
     
     mgmtZoneJson = createSimpleDictionary("urn:demeter:MgmtZone:", "ManagementZone")
     mgmtZoneJson["code"] = polygon.code
-
 
     return mgmtZoneJson
 
@@ -49,3 +53,14 @@ def createGeomJsonLD(polygon):
     geomJson["asWKT"] = coordsString
 
     return geomJson
+
+
+def createNdviClassification(colorName, coveragesDict):
+    
+    colorCodes = {"covered":-1, "brown":0, "yellow":1, "green":2}
+
+    colorJson = createSimpleDictionary("urn:demeter:NdviClassification:", "NdviClassification")
+    colorJson["code"] = colorCodes[colorName]
+    colorJson["coverage"] = coveragesDict[colorName]
+
+    return colorJson
