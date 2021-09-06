@@ -87,7 +87,7 @@ app = Api(app=flask_app,
           title='NDVI classification',
           description='Classify Images by the NDVI index')
 
-name_space = app.namespace('NDVI', description='NDVI-specific API s')
+name_space = app.namespace('ndvi', description='NDVI-specific API s')
 model = app.model('Input_Json_Model',
                   {
                       'polygonCoordinates': fields.String(
