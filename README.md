@@ -112,6 +112,6 @@ To install the aforementioned packages, the following command should be run in a
 
 ### Usage
 
-The app is written with Flask and it features two endpoints that only differ in the format of the output: one for JSON and one for JSONLD. For more information about the nature of the endpoints see the [Swagger documentation](http://127.0.0.1:5000/).
+The app is written with Flask and it features two endpoints that only differ in the format of the output: one for JSON and one for JSONLD. For more information about the nature of the endpoints run the application and access the [Swagger documentation](http://127.0.0.1:5000/).
 
 
