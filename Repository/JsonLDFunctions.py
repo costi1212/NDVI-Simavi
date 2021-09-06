@@ -19,7 +19,7 @@ def createJsonLD(polygonList, coveragesDict):
         colorJson = createNdviClassification(color, coveragesDict)
         graph.append(colorJson)
 
-    mainJsonLD["graph"] = graph
+    mainJsonLD["@graph"] = graph
     mainJsonLD["@context"] = "https://w3id.org/demeter/agri-context.jsonld"
     
     return jsonify(mainJsonLD)
