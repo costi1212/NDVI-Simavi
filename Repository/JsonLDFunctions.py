@@ -1,8 +1,5 @@
-import json
+
 import uuid
-
-from flask import jsonify
-
 from Repository.JsonFunctions import *
 
 def createJsonLD(polygonList, coveragesDict):

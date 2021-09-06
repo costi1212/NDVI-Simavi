@@ -1,31 +1,14 @@
-from apispec import APISpec
-from apispec.ext.marshmallow import MarshmallowPlugin
-from flask import Flask, request, jsonify
-from flask_restx import Api, Resource, fields, schemas
-# from werkzeug.utils import  cached_property
-from flask_restful_swagger import swagger
-from PIL import Image
+from flask import Flask, request
+from flask_restx import Api, Resource, fields
 import io
-import requests
-import ast
-import json
-
-from Main import calculateArea
 from Polygon import Polygon
-from Repository.Conversions import *
 from Repository.ImageSize import *
 from Repository.ImageEditing import *
-from Properties.Properties import *
-from Repository.JsonFunctions import *
 from Repository.JsonLDFunctions import *
 from Repository.PolygonPoints import *
-from Repository.Conversions import mapPolygonPointsOnImage, verifyOrderOfBboxCoordinates
 from Repository.ImageDate import *
 from Repository.ColorCoverage import *
-from flask_apispec import marshal_with, doc, use_kwargs
-from flask_apispec.views import MethodResource
 
-from flask_apispec.extension import FlaskApiSpec
 
 
 def requestImage(imageDate, bbox, height, width):
