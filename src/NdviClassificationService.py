@@ -8,7 +8,10 @@ from auxiliaries.JsonLDFunctions import *
 from auxiliaries.PolygonPoints import *
 from auxiliaries.ImageDate import *
 from auxiliaries.ColorCoverage import *
-
+from PIL import Image
+from src.Properties import *
+from src.auxiliaries.Conversions import *
+from src.auxiliaries.JsonFunctions import *
 
 
 def requestImage(imageDate, bbox, height, width):
@@ -38,7 +41,7 @@ def createColorMasks():
 
 
 def getPolygons(color, coordinatesBBOX, height, width):
-    path = "src/resources/images/" + color + ".png"
+    path = "resources/images/" + color + ".png"
     image = loadImage(path)
     contours = findContours(image)
     corners = extractPolygonCorners(path, color)
