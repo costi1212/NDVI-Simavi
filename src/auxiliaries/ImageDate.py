@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 import requests
-from Properties.Properties import *
+from Properties import *
 import json
-from Repository.Conversions import *
+from auxiliaries.Conversions import *
 
 
 #Metoda care face post pe serviciul terrascope ce returneaza date despre numarul de pixeli clari din inmaginea definita de poygonCoordinatesString

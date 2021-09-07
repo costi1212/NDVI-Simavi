@@ -1,4 +1,3 @@
-from Properties.Properties import PIXEL_SIZE
 import random
 import cv2
 import numpy as np

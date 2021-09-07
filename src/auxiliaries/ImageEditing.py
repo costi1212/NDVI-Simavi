@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from Repository.Conversions import roundFloatList
+from auxiliaries.Conversions import roundFloatList
 
 
 def cropImage(imagePath, pixelIndicesArray):
@@ -27,10 +27,10 @@ def cropImage(imagePath, pixelIndicesArray):
     cv2.bitwise_not(bg, bg, mask=mask)
     dst2 = bg + dst
 
-    cv2.imwrite("Imagini/croped.png", croped)
-    cv2.imwrite("Imagini/mask.png", mask)
-    cv2.imwrite("Imagini/dst.png", dst)
-    cv2.imwrite("Imagini/dst2.png", dst2)
+    cv2.imwrite("src/resources/images/croped.png", croped)
+    cv2.imwrite("src/resources/images/mask.png", mask)
+    cv2.imwrite("src/resources/images/dst.png", dst)
+    cv2.imwrite("src/resources/images/dst2.png", dst2)
 
 
 def colorMask(imagePath, color):
@@ -54,4 +54,4 @@ def colorMask(imagePath, color):
     green[imask] = img[imask]
 
     ## save
-    cv2.imwrite(f"Imagini/{color}.png", green)
+    cv2.imwrite(f"src/resources/images/{color}.png", green)

@@ -2,12 +2,12 @@ from flask import Flask, request
 from flask_restx import Api, Resource, fields
 import io
 from Polygon import Polygon
-from Repository.ImageSize import *
-from Repository.ImageEditing import *
-from Repository.JsonLDFunctions import *
-from Repository.PolygonPoints import *
-from Repository.ImageDate import *
-from Repository.ColorCoverage import *
+from auxiliaries.ImageSize import *
+from auxiliaries.ImageEditing import *
+from auxiliaries.JsonLDFunctions import *
+from auxiliaries.PolygonPoints import *
+from auxiliaries.ImageDate import *
+from auxiliaries.ColorCoverage import *
 
 
 
@@ -38,7 +38,7 @@ def createColorMasks():
 
 
 def getPolygons(color, coordinatesBBOX, height, width):
-    path = "Imagini/" + color + ".png"
+    path = "src/resources/images/" + color + ".png"
     image = loadImage(path)
     contours = findContours(image)
     corners = extractPolygonCorners(path, color)

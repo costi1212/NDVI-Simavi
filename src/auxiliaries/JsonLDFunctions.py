@@ -1,6 +1,5 @@
-
 import uuid
-from Repository.JsonFunctions import *
+from auxiliaries.JsonFunctions import *
 
 def createJsonLD(polygonList, coveragesDict):
 
