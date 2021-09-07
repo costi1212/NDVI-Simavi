@@ -3,7 +3,7 @@ from PIL import Image
 
 # Metoda care numara pxelii care nu sunt negrii dintr-o imagine
 # Pe imaginile pe care lucram trebuie sa fie deja aplicata o masca pentru culoarea pe care dorim sa o analizam peste un fundal negru
-from src.Properties import *
+from Properties import *
 
 
 def getCoveragesDict(imageNames):

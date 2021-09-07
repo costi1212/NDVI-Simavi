@@ -9,9 +9,9 @@ from auxiliaries.PolygonPoints import *
 from auxiliaries.ImageDate import *
 from auxiliaries.ColorCoverage import *
 from PIL import Image
-from src.Properties import *
-from src.auxiliaries.Conversions import *
-from src.auxiliaries.JsonFunctions import *
+from Properties import *
+from auxiliaries.Conversions import *
+from auxiliaries.JsonFunctions import *
 
 
 def requestImage(imageDate, bbox, height, width):
