@@ -89,20 +89,14 @@ The latest releases of Python also include the Python package installer (pip) wh
 following libraries:
 
 * numpy
-* math
 * requests
 * flask
-* flask-restful
-* flask-apispec
-* json
+* flask-RESTful
+* flask-restx
 * opencv-python
 * uuid
 * Pillow
-* pandas
 * pyproj
-* datetime
-* random
-* shapely
 
 To install the aforementioned packages, the following command should be run in a PowerShell terminal:
 
