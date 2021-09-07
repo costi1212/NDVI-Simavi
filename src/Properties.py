@@ -4,7 +4,7 @@ PIXEL_SIZE = 100
 url = 'https://services.terrascope.be/wms/v2'
 urlPixels = 'https://services.terrascope.be/timeseries/v1.0/ts/TERRASCOPE_S2_NDVI_V2/geometry?'
 defaultArguments = '?service=WMS&version=1.3.0&request=GetMap&layers=CGS_S2_NDVI&format=image/png&srs=EPSG:3857'
-jsonOutputs = 'src/outputs/JsonOutputs.json'
+jsonOutputs = 'outputs/JsonOutputs.json'
 croppedImageBlackBackground = 'resources/images/dst.png'
 croppedImageBlackBackgroundName = 'dst'
 croppedImageWhiteBackgroundName = 'dst2'
