@@ -131,4 +131,4 @@ class JsonldApi(Resource):
         return jsonld
 
 
-flask_app.run()
+flask_app.run(host='0.0.0.0')
