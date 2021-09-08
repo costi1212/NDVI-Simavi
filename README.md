@@ -19,7 +19,7 @@ Algorithm pipeline:
 - The chosen image is the clearest picture taken by the satellite recently with a clarity > 50% (Less than 50% of the image is covered by clouds).
 <p align="center">
   <a>
-    <img src="Imagini/Imagine.png" alt="Initial image" width="200" height="200">
+    <img src="src/resources/images/image.png" alt="Initial image" width="200" height="200">
   </a>
 </p>
 
@@ -28,7 +28,7 @@ Algorithm pipeline:
 - The image is cropped and rescaled, such that only the relevant parcel is visible, not the whole bounding box.
 <p align="center">
   <a>
-    <img src="Imagini/dst.png" alt="Cropped image" width="200" height="200">
+    <img src="src/resources/images/dst.png" alt="Cropped image" width="200" height="200">
   </a>
 </p>
 
@@ -36,13 +36,13 @@ Algorithm pipeline:
 
 <p align="center">
   <a>
-    <img src="Imagini/green.png" alt="Green mask" width="160" height="160">
+    <img src="src/resources/images/green.png" alt="Green mask" width="160" height="160">
   </a>
   <a>
-    <img src="Imagini/yellow.png" alt="Yellow mask" width="160" height="160">
+    <img src="src/resources/images/yellow.png" alt="Yellow mask" width="160" height="160">
   </a>
   <a>
-    <img src="Imagini/brown.png" alt="Brown mask" width="160" height="160">
+    <img src="src/resources/images/brown.png" alt="Brown mask" width="160" height="160">
   </a>
 </p>
 
@@ -52,13 +52,13 @@ Algorithm pipeline:
 - The corners and contours of each of the 3 images is found by using the [OpenCV](https://opencv.org/) library. Here is a representation of the corners of each image:
 <p align="center">
   <a>
-    <img src="Imagini/greenpoints.png" alt="Green mask" width="160" height="160">
+    <img src="src/resources/images/greenpoints.png" alt="Green mask" width="160" height="160">
   </a>
   <a>
-    <img src="Imagini/yellowpoints.png" alt="Yellow mask" width="160" height="160">
+    <img src="src/resources/images/yellowpoints.png" alt="Yellow mask" width="160" height="160">
   </a>
   <a>
-    <img src="Imagini/brownpoints.png" alt="Brown mask" width="160" height="160">
+    <img src="src/resources/images/brownpoints.png" alt="Brown mask" width="160" height="160">
   </a>
 </p>
 
@@ -98,10 +98,10 @@ following libraries:
 * Pillow
 * pyproj
 
-To install the aforementioned packages, the following command should be run in a PowerShell terminal:
+The aforementioned packages and their version are included in the file [requirements.txt](requirements.txt). They can all be installed by typing the following command in a PowerShell terminal:
 
   ```sh
-  pip install library-name
+  pip install -r requirements.txt
   ```
 
 ### Usage
