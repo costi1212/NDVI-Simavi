@@ -1,0 +1,27 @@
+2021-09-09 11:06:03,488 - INFO - Simple Json request started.
+2021-09-09 11:06:09,508 - INFO - Image retreived from Terrascope service.
+2021-09-09 11:06:09,624 - INFO - Image cropped, rescaled and split into sub-images.
+2021-09-09 11:06:11,085 - INFO - Polygons extracted from the green image.
+2021-09-09 11:06:12,419 - INFO - Polygons extracted from the yellow image.
+2021-09-09 11:06:12,831 - INFO - Polygons extracted from the brown image.
+2021-09-09 11:06:12,839 - INFO - Json generated.
+2021-09-09 11:06:12,839 - INFO - Simple Json request ended.
+2021-09-09 11:06:12,839 - INFO - 127.0.0.1 - - [09/Sep/2021 11:06:12] "POST /ndvi/api/json/v1/ndvi-classification HTTP/1.1" 200 -
+2021-09-09 11:06:26,828 - INFO - Simple Json request started.
+2021-09-09 11:06:31,932 - INFO - Image retreived from Terrascope service.
+2021-09-09 11:06:31,974 - INFO - Image cropped, rescaled and split into sub-images.
+2021-09-09 11:06:33,763 - INFO - Polygons extracted from the green image.
+2021-09-09 11:06:36,148 - INFO - Polygons extracted from the yellow image.
+2021-09-09 11:06:36,566 - INFO - Polygons extracted from the brown image.
+2021-09-09 11:06:36,582 - INFO - Json generated.
+2021-09-09 11:06:36,582 - INFO - Simple Json request ended.
+2021-09-09 11:06:36,582 - INFO - 127.0.0.1 - - [09/Sep/2021 11:06:36] "POST /ndvi/api/json/v1/ndvi-classification HTTP/1.1" 200 -
+2021-09-09 11:07:17,559 - INFO - JsonLd request started.
+2021-09-09 11:07:23,125 - INFO - Image retreived from Terrascope service.
+2021-09-09 11:07:23,158 - INFO - Image cropped, rescaled and split into sub-images.
+2021-09-09 11:07:24,100 - INFO - Polygons extracted from the green image.
+2021-09-09 11:07:25,344 - INFO - Polygons extracted from the yellow image.
+2021-09-09 11:07:25,619 - INFO - Polygons extracted from the brown image.
+2021-09-09 11:07:25,628 - INFO - JsonLd generated.
+2021-09-09 11:07:25,628 - INFO - JsonLd request ended.
+2021-09-09 11:07:25,628 - INFO - 127.0.0.1 - - [09/Sep/2021 11:07:25] "POST /ndvi/api/jsonld/v1/ndvi-classification HTTP/1.1" 200 -

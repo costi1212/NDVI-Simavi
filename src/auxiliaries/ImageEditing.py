@@ -1,3 +1,4 @@
+import logging
 import cv2
 import numpy as np
 from auxiliaries.Conversions import roundFloatList
@@ -35,7 +36,10 @@ def cropImage(imagePath, pixelIndicesArray):
 
 def colorMask(imagePath, color):
     ## Read
-    img = cv2.imread(imagePath)
+    try:
+        img = cv2.imread(imagePath)
+    except:
+        logging.exception("Could not read image from relative path " + imagePath)
 
     ## convert to hsv
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
