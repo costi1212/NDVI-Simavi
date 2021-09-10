@@ -1,5 +1,5 @@
-from Repository.Conversions import *
-from Properties.Properties import *
+from auxiliaries.Conversions import *
+from Properties import *
 
 
 def getOxDistance(BBOXCoordinates):

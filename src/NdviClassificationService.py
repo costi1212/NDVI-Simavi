@@ -2,23 +2,30 @@ from flask import Flask, request
 from flask_restx import Api, Resource, fields
 import io
 from Polygon import Polygon
-from Repository.ImageSize import *
-from Repository.ImageEditing import *
-from Repository.JsonLDFunctions import *
-from Repository.PolygonPoints import *
-from Repository.ImageDate import *
-from Repository.ColorCoverage import *
-
+from auxiliaries.ImageSize import *
+from auxiliaries.ImageEditing import *
+from auxiliaries.JsonLDFunctions import *
+from auxiliaries.PolygonPoints import *
+from auxiliaries.ImageDate import *
+from auxiliaries.ColorCoverage import *
+from PIL import Image
+from Properties import *
+from auxiliaries.Conversions import *
+from auxiliaries.JsonFunctions import *
+import logging
+import sys
 
 
 def requestImage(imageDate, bbox, height, width):
     urlRequest = url + defaultArguments + f'&time={imageDate}' + f'&bbox={bbox}' + f'&height={height}' + f'&width={width}'
     print(urlRequest)
     response = requests.get(urlRequest)
-    # poate sa adaugam un
-    # if response.status_code == 200:
-    #   return response.content
-    return response.content
+    if response.status_code == 200:
+        logging.info("Image retreived from Terrascope service.")
+        return response.content
+    else:
+        logging.critical("Could not retrieve image from Terrascope service.")
+        sys.exit()
 
 
 def dataProcessing(coordinatesBBOX, polygonCoordinates, dateImage, height, width):
@@ -35,18 +42,25 @@ def dataProcessing(coordinatesBBOX, polygonCoordinates, dateImage, height, width
 def createColorMasks():
     for i in colors:
         colorMask(croppedImageBlackBackground, i)
+    
+    logging.info("Image cropped, rescaled and split into sub-images.")
 
 
 def getPolygons(color, coordinatesBBOX, height, width):
-    path = "Imagini/" + color + ".png"
-    image = loadImage(path)
+    path = "resources/images/" + color + ".png"
+    
+    try:
+        image = loadImage(path)
+    except:
+        logging.exception("Could not read image from relative path " + path)
+
     contours = findContours(image)
     corners = extractPolygonCorners(path, color)
     convertedContours = convertNumpyToList(contours)
     polygonCoords = extractPolygons(convertedContours, corners)
 
     # Optional step for visualising the results
-    drawPolygonsAndContours(polygonCoords, contours, image)
+    #drawPolygonsAndContours(polygonCoords, contours, image)
 
     # Dictionary used to convert color names to the coresponding codes.
     colorCode = {"brown": 0, "yellow": 1, "green": 2}
@@ -60,6 +74,8 @@ def getPolygons(color, coordinatesBBOX, height, width):
         coords = pixelsIndicesToCoordinates(poly, height, width, coordinatesBBOX)
         p = Polygon(coords, colorCode[color.lower()])
         polygonList.append(p)
+
+    logging.info("Polygons extracted from the " + color + " image.")
 
     return polygonList
 
@@ -88,6 +104,8 @@ class JsonApi(Resource):
     @app.expect(model)
     # @app.marshal_with(model)
     def post(self):
+        logging.basicConfig(filename='events.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+        logging.info("Simple Json request started.")
         args = request.json
         print(args)
         coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
@@ -104,6 +122,8 @@ class JsonApi(Resource):
         coveragesDict = getCoveragesDict(imagesForDict)
         coveragesDict = createFinalDict(coveragesDict)
         jsonOut = createJson(polygonList, coveragesDict)
+        logging.info("Json generated.")
+        logging.info("Simple Json request ended.")
         return jsonOut
 
 
@@ -112,6 +132,8 @@ class JsonldApi(Resource):
     @app.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
     @app.expect(model)
     def post(self):
+        logging.basicConfig(filename='app.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+        logging.info("JsonLd request started.")
         args = request.json
         coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
         width = getWidth(getOxDistance(coordinatesBBOX))
@@ -128,7 +150,9 @@ class JsonldApi(Resource):
         coveragesDict = getCoveragesDict(imagesForDict)
         coveragesDict = createFinalDict(coveragesDict)
         jsonld = createJsonLD(polygonList, coveragesDict)
+        logging.info("JsonLd generated.")
+        logging.info("JsonLd request ended.")
         return jsonld
 
 
-flask_app.run()
+flask_app.run(host='0.0.0.0')
