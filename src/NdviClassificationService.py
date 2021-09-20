@@ -1,6 +1,9 @@
 from flask import Flask, request
-from flask_restx import Api, Resource, fields
+from flask_restx import Api, Resource, fields, abort
 import io
+from werkzeug.exceptions import Unauthorized
+from requests import Response
+
 from Polygon import Polygon
 from auxiliaries.ImageSize import *
 from auxiliaries.ImageEditing import *
@@ -21,7 +24,7 @@ def requestImage(imageDate, bbox, height, width):
     print(urlRequest)
     response = requests.get(urlRequest)
     if response.status_code == 200:
-        logging.info("Image retreived from Terrascope service.")
+        logging.info("Image retrieved from Terrascope service.")
         return response.content
     else:
         logging.critical("Could not retrieve image from Terrascope service.")
@@ -42,13 +45,12 @@ def dataProcessing(coordinatesBBOX, polygonCoordinates, dateImage, height, width
 def createColorMasks():
     for i in colors:
         colorMask(croppedImageBlackBackground, i)
-    
-    logging.info("Image cropped, rescaled and split into sub-images.")
 
+    logging.info("Image cropped, rescaled and split into sub-images.")
 
 def getPolygons(color, coordinatesBBOX, height, width):
     path = "resources/images/" + color + ".png"
-    
+
     try:
         image = loadImage(path)
     except:
@@ -60,7 +62,7 @@ def getPolygons(color, coordinatesBBOX, height, width):
     polygonCoords = extractPolygons(convertedContours, corners)
 
     # Optional step for visualising the results
-    #drawPolygonsAndContours(polygonCoords, contours, image)
+    # drawPolygonsAndContours(polygonCoords, contours, image)
 
     # Dictionary used to convert color names to the coresponding codes.
     colorCode = {"brown": 0, "yellow": 1, "green": 2}
@@ -104,27 +106,35 @@ class JsonApi(Resource):
     @app.expect(model)
     # @app.marshal_with(model)
     def post(self):
-        logging.basicConfig(filename='events.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-        logging.info("Simple Json request started.")
+        logging.basicConfig(filename='events.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s',
+                            level=logging.INFO)
         args = request.json
-        print(args)
-        coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
-        width = getWidth(getOxDistance(coordinatesBBOX))
-        height = getHeight(getOyDistance(coordinatesBBOX))
-        optimalImage = getOptimalDate(args['polygonCoordinates'])
-        dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
-        createColorMasks()
-        polygonList = []
-        for i in colors:
-            polygonList += getPolygons(i, coordinatesBBOX, height, width)
-        imagesForDict = colors[:]
-        imagesForDict.append(croppedImageBlackBackgroundName)
-        coveragesDict = getCoveragesDict(imagesForDict)
-        coveragesDict = createFinalDict(coveragesDict)
-        jsonOut = createJson(polygonList, coveragesDict)
-        logging.info("Json generated.")
-        logging.info("Simple Json request ended.")
-        return jsonOut
+        logging.info("Checking token")
+        if (args['clientId'] == token):
+            logging.info("Token is valid")
+            logging.info("Simple Json request started.")
+
+            # print(args)
+            coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
+            width = getWidth(getOxDistance(coordinatesBBOX))
+            height = getHeight(getOyDistance(coordinatesBBOX))
+            optimalImage = getOptimalDate(args['polygonCoordinates'])
+            dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
+            createColorMasks()
+            polygonList = []
+            for i in colors:
+                polygonList += getPolygons(i, coordinatesBBOX, height, width)
+            imagesForDict = colors[:]
+            imagesForDict.append(croppedImageBlackBackgroundName)
+            coveragesDict = getCoveragesDict(imagesForDict)
+            coveragesDict = createFinalDict(coveragesDict)
+            jsonOut = createJson(polygonList, coveragesDict)
+            logging.info("Json generated.")
+            logging.info("Simple Json request ended.")
+            return jsonOut
+        else:
+            logging.info("Invalid token!")
+            app.abort(401, "Invalid token!")
 
 
 @name_space.route("/api/jsonld/v1/ndvi-classification")
@@ -132,27 +142,35 @@ class JsonldApi(Resource):
     @app.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
     @app.expect(model)
     def post(self):
-        logging.basicConfig(filename='app.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-        logging.info("JsonLd request started.")
+        logging.basicConfig(filename='app.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s',
+                            level=logging.INFO)
         args = request.json
-        coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
-        width = getWidth(getOxDistance(coordinatesBBOX))
-        height = getHeight(getOyDistance(coordinatesBBOX))
-        optimalImage = getOptimalDate(args['polygonCoordinates'])
-        dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
-        print(colors)
-        createColorMasks()
-        polygonList = []
-        for i in colors:
-            polygonList += getPolygons(i, coordinatesBBOX, height, width)
-        imagesForDict = colors[:]
-        imagesForDict.append(croppedImageBlackBackgroundName)
-        coveragesDict = getCoveragesDict(imagesForDict)
-        coveragesDict = createFinalDict(coveragesDict)
-        jsonld = createJsonLD(polygonList, coveragesDict)
-        logging.info("JsonLd generated.")
-        logging.info("JsonLd request ended.")
-        return jsonld
+        logging.info("Checking token")
+        if (args['clientId'] == token):
+            logging.info("Token is valid")
+            logging.info("JsonLd request started.")
+            args = request.json
+            coordinatesBBOX = getBBOXFromParcelCoordinates(stringToFloatList(args['polygonCoordinates']))
+            width = getWidth(getOxDistance(coordinatesBBOX))
+            height = getHeight(getOyDistance(coordinatesBBOX))
+            optimalImage = getOptimalDate(args['polygonCoordinates'])
+            dataProcessing(coordinatesBBOX, args['polygonCoordinates'], optimalImage[0], height, width)
+            print(colors)
+            createColorMasks()
+            polygonList = []
+            for i in colors:
+                polygonList += getPolygons(i, coordinatesBBOX, height, width)
+            imagesForDict = colors[:]
+            imagesForDict.append(croppedImageBlackBackgroundName)
+            coveragesDict = getCoveragesDict(imagesForDict)
+            coveragesDict = createFinalDict(coveragesDict)
+            jsonld = createJsonLD(polygonList, coveragesDict)
+            logging.info("JsonLd generated.")
+            logging.info("JsonLd request ended.")
+            return jsonld
+        else:
+            logging.info("Invalid token!")
+            app.abort(401, "Invalid token!")
 
 
 flask_app.run(host='0.0.0.0')

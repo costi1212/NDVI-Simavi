@@ -8,6 +8,7 @@ jsonOutputs = 'outputs/JsonOutputs.json'
 croppedImageBlackBackground = 'resources/images/dst.png'
 croppedImageBlackBackgroundName = 'dst'
 croppedImageWhiteBackgroundName = 'dst2'
+token = '36aef768-3076-43ad-8566-4818fd82c73c'
 colors = ['green', 'yellow', 'brown']
 imageLocation = 'resources/images/image.png'
 date = '2021-05-15'
