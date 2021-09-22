@@ -71,6 +71,7 @@ Algorithm pipeline:
 - For simple JSON, the fields are structured in "Features" that have a class number, area and a polygon geometry which is determined by its coordinates.
 - For JSONLD, the fields are organized in Management Zones which also have a class number, area and a Management Zone Geometry. The difference here however, is that the Management Zone Geometry is linked by id to the Management Zone that it belongs to. 
 
+
 ### Built With
 
 * [Python](https://www.python.org/)
@@ -107,5 +108,11 @@ The aforementioned packages and their version are included in the file [requirem
 ### Usage
 
 The app is written with Flask and it features two endpoints that only differ in the format of the output: one for JSON and one for JSONLD. For more information about the nature of the endpoints run the application and access the [Swagger documentation](http://127.0.0.1:5000/).
+Here you can find an example of a body you can use in the POST request.
+This body is also provided below:  
+{
+"polygonCoordinates":"27.199243,45.910026,27.209468,45.911885,27.209607,45.906525,27.200563,45.904793",  
+"clientId":"36aef768-3076-43ad-8566-4818fd82c73c"  
+}
 
 
