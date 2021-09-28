@@ -48,6 +48,7 @@ def createColorMasks():
 
     logging.info("Image cropped, rescaled and split into sub-images.")
 
+
 def getPolygons(color, coordinatesBBOX, height, width):
     path = "resources/images/" + color + ".png"
 
@@ -96,6 +97,12 @@ model = app.model('Input_Json_Model',
                           description='Coordinates of the polygon to be analysed.',
                           help='Coordinates cannot be left unspecified.',
                           example=polygonCoordinatesString
+                      ),
+                      'clientId': fields.String(
+                          required=True,
+                          description='Coordinates of the polygon to be analysed.',
+                          help='Coordinates cannot be left unspecified.',
+                          example=token
                       )
                   })
 
