@@ -26,8 +26,8 @@ def getCoveredPixels(whiteBacgroundMask):
     totalPixels = 1
     im = Image.open(f'resources/images/{whiteBacgroundMask}.png')
     for pixel in im.getdata():
-        if pixel !=(255,255, 255):
-            totalPixels +=1
+        if pixel != (255, 255, 255):
+            totalPixels += 1
             if pixel == (0, 0, 0):
                 coveredPixels += 1
 

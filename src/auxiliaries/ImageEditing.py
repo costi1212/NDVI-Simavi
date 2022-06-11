@@ -44,7 +44,6 @@ def colorMask(imagePath, color):
     ## convert to hsv
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    ## mask of green (36,25,25) ~ (86, 255,255)
     if color.upper() == "GREEN":
         mask = cv2.inRange(hsv, (41, 25, 25), (70, 255, 255))
     elif color.upper() == "YELLOW":
@@ -52,10 +51,12 @@ def colorMask(imagePath, color):
     elif color.upper() == "BROWN":
         mask = cv2.inRange(hsv, (13, 25, 25), (22, 255, 255))
 
-    ## slice the green
+    cv2.imwrite(f"resources/images/{color}mask.png", mask)
+
+    ## slice the color
     imask = mask > 0
-    green = np.zeros_like(img, np.uint8)
-    green[imask] = img[imask]
+    colorImage = np.zeros_like(img, np.uint8)
+    colorImage[imask] = img[imask]
 
     ## save
-    cv2.imwrite(f"resources/images/{color}.png", green)
+    cv2.imwrite(f"resources/images/{color}.png", colorImage)

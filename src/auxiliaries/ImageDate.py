@@ -34,16 +34,20 @@ def getOptimalDate(polygonCoordinatesString):
     polygonCoordinatesString = polygonCoordinatesString.replace(" ","")
     while ok == 0:
         responseJson = postPixelCountService(polygonCoordinatesString, days)
-        maxDate = responseJson['results'][0]['date']
-        if responseJson['results'][0]['result']['average'] != 'NaN':
-            max = float(responseJson['results'][0]['result']['average'])
+        maxDate = responseJson['results'][len(responseJson['results'])-1]['date']
+        if float(responseJson['results'][0]['result']['validCount']) != 0:
+            max = float(responseJson['results'][0]['result']['validCount'])/float(responseJson['results'][0]['result']
+                                                                                  ['totalCount'])
+            maxDate = responseJson['results'][0]['date']
         else:
             max = 0
         for i in range(len(responseJson['results'])):
-            if responseJson['results'][i]['result']['average'] != 'NaN' and float(responseJson['results'][i]['result']['average']) > max:
-                max = float(responseJson['results'][i]['result']['average'])
-                maxDate =responseJson['results'][i]['date']
-        if max > 0.5:
+            validRatio = float(responseJson['results'][i]['result']['validCount'])/float(responseJson['results']
+                                                                                         [i]['result']['totalCount'])
+            if  validRatio != 0 and validRatio >= max:
+                max = validRatio
+                maxDate = responseJson['results'][i]['date']
+        if max > 0.8:
             ok = 1
         days += 30
     outputStringList = []

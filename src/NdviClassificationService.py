@@ -1,3 +1,4 @@
+import cv2
 from flask import Flask, request
 from flask_restx import Api, Resource, fields, abort
 import io
@@ -58,12 +59,18 @@ def getPolygons(color, coordinatesBBOX, height, width):
         logging.exception("Could not read image from relative path " + path)
 
     contours = findContours(image)
+    """
+    for cnt in contours:
+        vertices = cv2.cv2.approxPolyDP(cnt, 0.009 * cv2.arcLength(cnt, True), True)
+        cv2.drawContours(image, [vertices], 0, (0, 0, 255), 5)
+        cv2.imwrite(path, image)
+    """
     corners = extractPolygonCorners(path, color)
     convertedContours = convertNumpyToList(contours)
     polygonCoords = extractPolygons(convertedContours, corners)
-
+    copy = image
     # Optional step for visualising the results
-    # drawPolygonsAndContours(polygonCoords, contours, image)
+    drawPolygonsAndContours(polygonCoords, contours, image)
 
     # Dictionary used to convert color names to the coresponding codes.
     colorCode = {"brown": 0, "yellow": 1, "green": 2}
@@ -111,7 +118,6 @@ model = app.model('Input_Json_Model',
 class JsonApi(Resource):
     @app.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
     @app.expect(model)
-    # @app.marshal_with(model)
     def post(self):
         logging.basicConfig(filename='events.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s',
                             level=logging.INFO)

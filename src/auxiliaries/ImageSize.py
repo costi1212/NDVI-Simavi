@@ -17,8 +17,8 @@ def getOyDistance(BBOXCoordinates):
 
 
 def getWidth(OxDistance):
-    return int(OxDistance / 10)
+    return int(OxDistance)
 
 
 def getHeight(OyDistance):
-    return int(OyDistance / 10)
+    return int(OyDistance)

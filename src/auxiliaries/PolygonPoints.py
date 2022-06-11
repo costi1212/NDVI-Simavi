@@ -14,9 +14,10 @@ def loadImage(imagePath):
 # Finds the contours of all the shapes of the given image.
 # The contours are returned as a list of lists.
 def findContours(image):
-    gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-    edged = cv2.Canny(gray,30,200)
-    contours, _ = cv2.findContours(edged,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    edged = cv2.Canny(gray, 200, 600)
+    cv2.imwrite("resources/images/edged.png", edged)
+    contours, _ = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     return contours
 
 
@@ -50,10 +51,12 @@ def extractPolygonCorners(imagePath, color):
     # thres poate fi modificat pt a gasi mai multe colturi
     thres = 0.1 * dst.max()
     
-    _, dst = cv2.threshold(dst, thres, 255, 0)
+    #_, dst = cv2.threshold(dst, thres, 255, 0)
     
     img[dst > thres] = [0, 0, 255]
-    
+
+    cv2.imwrite('resources/images/cornerHarris.png', img)
+
     corners = []
     for i in range(len(img)):
         for j in range(len(img[0])):
@@ -72,10 +75,12 @@ def drawPolygonsAndContours(polygons, contours, image):
         r = random.randint(0,255)
         g = random.randint(0,255)
         for c in p:
-            cv2.circle(image, (c[0],c[1]), 1, (b,r,g), 1)
+            cv2.circle(image, (c[0], c[1]), 4, (b,r,g), -1)
 
-    #cv2.imshow("polygons", image)
+    cv2.imwrite("resources/images/edged.png", image)
     cv2.drawContours(image, contours, -1, (255, 0, 255), 3)
+    cv2.imwrite("resources/images/contours.png", image)
+    2+2
     #cv2.imshow('contours', image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
