@@ -141,7 +141,7 @@ class JsonApi(Resource):
             imagesForDict.append(croppedImageBlackBackgroundName)
             coveragesDict = getCoveragesDict(imagesForDict)
             coveragesDict = createFinalDict(coveragesDict)
-            jsonOut = createJson(polygonList, coveragesDict)
+            jsonOut = createJson(polygonList, coveragesDict, optimalImage[0])
             logging.info("Json generated.")
             logging.info("Simple Json request ended.")
             return jsonOut

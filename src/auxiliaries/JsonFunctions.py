@@ -1,11 +1,11 @@
 from flask import jsonify
 
 
-def createJson(polygonList, coveragesDict):
+def createJson(polygonList, coveragesDict, imageDate):
     mainJson = {}
     mainJson["statistics"] = createStatisticsList(coveragesDict)
     mainJson["map"] = createMapJson(polygonList)
-
+    mainJson["imageDate"] = imageDate
     return jsonify(mainJson)
 
 
@@ -40,9 +40,12 @@ def createStatisticsList(coveragesDict):
     statsGreen = {"code": 2, "colorHex": "#768A10", "coverage": coveragesDict["green"]}
     statsCovered = {"code": -1, "colorHex": "#FFFFFF", "coverage": coveragesDict["covered"]}
 
+    totalArea = {"area": coveragesDict['area']}
+
     statistics.append(statsBrown)
     statistics.append(statsYellow)
     statistics.append(statsGreen)
     statistics.append(statsCovered)
+    statistics.append(totalArea)
 
     return statistics

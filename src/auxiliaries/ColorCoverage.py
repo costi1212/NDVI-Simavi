@@ -47,6 +47,7 @@ def getTotalPixels(whiteBackgroundMask):
 
 def createFinalDict(coveragesDict):
     coveragesDict['covered'] = getCoveredPixels(croppedImageWhiteBackgroundName)
+    coveragesDict['area'] = getTotalPixels(croppedImageWhiteBackgroundName)
     return coveragesDict
 
 
